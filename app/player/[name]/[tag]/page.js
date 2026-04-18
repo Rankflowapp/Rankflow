@@ -2,7 +2,6 @@ export default async function PlayerPage({ params }) {
   const { name, tag } = await params
   const apiKey = process.env.HENRIK_API_KEY
 
-  // 1. Récupérer le compte
   const accountRes = await fetch(
     `https://api.henrikdev.xyz/valorant/v1/account/${name}/${tag}`,
     { headers: { Authorization: apiKey } }
@@ -20,13 +19,36 @@ export default async function PlayerPage({ params }) {
 
   const account = accountData.data
 
-  // 2. Récupérer le rang
   const mmrRes = await fetch(
     `https://api.henrikdev.xyz/valorant/v2/mmr/eu/${name}/${tag}`,
     { headers: { Authorization: apiKey } }
   )
   const mmrData = await mmrRes.json()
   const mmr = mmrData.data?.current_data
+
+  const matchesRes = await fetch(
+    `https://api.henrikdev.xyz/valorant/v4/matches/eu/pc/${name}/${tag}?mode=competitive&size=5`,
+    { headers: { Authorization: apiKey } }
+  )
+  const matchesData = await matchesRes.json()
+
+  const matches = matchesData.data?.map(match => {
+    const me = match.players?.find(p => p.puuid === account.puuid)
+    const myTeam = me?.team_id
+    const won = match.teams?.find(t => t.team_id === myTeam)?.won
+    return {
+      map: match.metadata?.map?.name || "Unknown",
+      result: won ? "Win" : "Loss",
+      kills: me?.stats?.kills || 0,
+      deaths: me?.stats?.deaths || 0,
+      assists: me?.stats?.assists || 0,
+      agent: me?.agent?.name || "Unknown",
+    }
+  }) || []
+
+  const wins = matches.filter(m => m.result === "Win").length
+  const losses = matches.filter(m => m.result === "Loss").length
+  const winrate = matches.length > 0 ? Math.round((wins / matches.length) * 100) : 0
 
   function getRankColor(tier) {
     if (tier >= 21) return "text-green-400"
@@ -71,6 +93,41 @@ export default async function PlayerPage({ params }) {
           </div>
         </div>
       )}
+
+      {/* SESSION RECAP */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+        <p className="text-slate-400 mb-4">5 derniers matchs compétitifs</p>
+        <div className="grid grid-cols-3 gap-4 text-center mb-6">
+          <div className="bg-slate-800 p-4 rounded-xl">
+            <p className="text-emerald-400 text-xl font-bold">{wins}</p>
+            <p className="text-sm text-slate-400">Wins</p>
+          </div>
+          <div className="bg-slate-800 p-4 rounded-xl">
+            <p className="text-rose-400 text-xl font-bold">{losses}</p>
+            <p className="text-sm text-slate-400">Losses</p>
+          </div>
+          <div className="bg-slate-800 p-4 rounded-xl">
+            <p className="text-indigo-400 text-xl font-bold">{winrate}%</p>
+            <p className="text-sm text-slate-400">Winrate</p>
+          </div>
+        </div>
+
+        {/* LISTE DES MATCHS */}
+        <div className="space-y-3">
+          {matches.map((match, i) => (
+            <div key={i} className={`flex items-center justify-between p-4 rounded-xl border ${match.result === "Win" ? "border-emerald-500/30 bg-emerald-500/5" : "border-rose-500/30 bg-rose-500/5"}`}>
+              <div className="flex items-center gap-3">
+                <span className={`font-bold text-sm px-2 py-1 rounded ${match.result === "Win" ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"}`}>
+                  {match.result}
+                </span>
+                <span className="text-white font-medium">{match.map}</span>
+                <span className="text-slate-400 text-sm">{match.agent}</span>
+              </div>
+              <span className="text-slate-300 font-mono">{match.kills}/{match.deaths}/{match.assists}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
     </div>
   )
