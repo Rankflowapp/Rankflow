@@ -13,7 +13,7 @@ export default function MapsPage() {
           <Link
             key={map.slug}
             href={`/maps/${map.slug}`}
-            className="bg-slate-900 p-6 rounded-3xl border border-slate-800"
+            className="bg-slate-900 p-6 rounded-3xl border border-slate-800 transition transform hover:-translate-y-1 hover:border-indigo-400/40 hover:bg-slate-800 cursor-pointer"
           >
             <h2 className="text-2xl font-semibold">{map.name}</h2>
             <p className="text-slate-400 mt-2">
