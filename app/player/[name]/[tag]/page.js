@@ -27,7 +27,7 @@ export default async function PlayerPage({ params }) {
   const mmr = mmrData.data?.current_data
 
   const matchesRes = await fetch(
-    `https://api.henrikdev.xyz/valorant/v4/matches/eu/pc/${name}/${tag}?mode=competitive&size=5`,
+    `https://api.henrikdev.xyz/valorant/v4/matches/eu/pc/${name}/${tag}?mode=competitive&size=20`,
     { headers: { Authorization: apiKey } }
   )
   const matchesData = await matchesRes.json()
@@ -49,6 +49,43 @@ export default async function PlayerPage({ params }) {
   const wins = matches.filter(m => m.result === "Win").length
   const losses = matches.filter(m => m.result === "Loss").length
   const winrate = matches.length > 0 ? Math.round((wins / matches.length) * 100) : 0
+
+  // Calculer les stats par map
+  const mapStats = {}
+  matches.forEach(match => {
+    if (!mapStats[match.map]) {
+      mapStats[match.map] = { wins: 0, total: 0 }
+    }
+    mapStats[match.map].total++
+    if (match.result === "Win") mapStats[match.map].wins++
+  })
+
+  const mapList = Object.entries(mapStats).map(([map, stats]) => ({
+    map,
+    wr: Math.round((stats.wins / stats.total) * 100),
+    total: stats.total
+  })).sort((a, b) => b.wr - a.wr)
+
+  const bestMap = mapList[0]
+  const worstMap = mapList[mapList.length - 1]
+
+  // Calculer le meilleur agent
+  const agentStats = {}
+  matches.forEach(match => {
+    if (!agentStats[match.agent]) {
+      agentStats[match.agent] = { wins: 0, total: 0 }
+    }
+    agentStats[match.agent].total++
+    if (match.result === "Win") agentStats[match.agent].wins++
+  })
+
+  const bestAgent = Object.entries(agentStats)
+    .map(([agent, stats]) => ({
+      agent,
+      wr: Math.round((stats.wins / stats.total) * 100),
+      total: stats.total
+    }))
+    .sort((a, b) => b.wr - a.wr)[0]
 
   function getRankColor(tier) {
     if (tier >= 21) return "text-green-400"
@@ -94,9 +131,31 @@ export default async function PlayerPage({ params }) {
         </div>
       )}
 
+      {/* SESSION PLAN */}
+      {bestMap && (
+        <div className="relative rounded-3xl overflow-hidden border border-slate-800 hover:border-indigo-400/40 transition">
+          <div className="bg-gradient-to-r from-slate-950/90 to-slate-900/70 p-6">
+            <p className="text-sm text-indigo-300 mb-2">🎮 Session Plan</p>
+            <h2 className="text-2xl font-semibold">Play {bestMap.map}</h2>
+            <p className="text-slate-300 mt-1">Avoid {worstMap.map}</p>
+            <div className="mt-4 flex gap-4 text-sm flex-wrap">
+              <div className="bg-black/40 px-4 py-2 rounded-xl border border-slate-700">
+                🎯 {bestAgent?.agent}
+              </div>
+              <div className="bg-black/40 px-4 py-2 rounded-xl border border-slate-700">
+                📊 {bestMap.wr}% WR sur {bestMap.map}
+              </div>
+              <div className="bg-black/40 px-4 py-2 rounded-xl border border-slate-700">
+                ⚠️ {worstMap.wr}% WR sur {worstMap.map}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* SESSION RECAP */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
-        <p className="text-slate-400 mb-4">5 derniers matchs compétitifs</p>
+         <p className="text-slate-400 mb-4">{matches.length} derniers matchs compétitifs</p>
         <div className="grid grid-cols-3 gap-4 text-center mb-6">
           <div className="bg-slate-800 p-4 rounded-xl">
             <p className="text-emerald-400 text-xl font-bold">{wins}</p>
