@@ -26,6 +26,14 @@ export default async function PlayerPage({ params }) {
   const mmrData = await mmrRes.json()
   const mmr = mmrData.data?.current_data
 
+  // Récupérer l'historique MMR pour la courbe
+  const historyRes = await fetch(
+    `https://api.henrikdev.xyz/valorant/v1/mmr-history/eu/${name}/${tag}`,
+    { headers: { Authorization: apiKey } }
+  )
+  const historyData = await historyRes.json()
+  const history = historyData.data?.slice(0, 15).reverse() || []
+
   const matchesRes = await fetch(
     `https://api.henrikdev.xyz/valorant/v4/matches/eu/pc/${name}/${tag}?mode=competitive&size=20`,
     { headers: { Authorization: apiKey } }
@@ -127,6 +135,159 @@ export default async function PlayerPage({ params }) {
             <div className={`text-lg font-bold ${mmr.mmr_change_to_last_game >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
               {mmr.mmr_change_to_last_game >= 0 ? "+" : ""}{mmr.mmr_change_to_last_game} RR
             </div>
+          </div>
+        </div>
+      )}
+
+{/* COURBE DE PROGRESSION */}
+      {history.length > 1 && (
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <p className="text-slate-400 text-sm">Progression</p>
+              <p className="text-xs text-slate-500 mt-1">{history.length} derniers matchs</p>
+            </div>
+            <div className="flex gap-3 text-xs">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span className="text-slate-400">Win</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+                <span className="text-slate-400">Loss</span>
+              </span>
+            </div>
+          </div>
+
+          {(() => {
+            // Noms des rangs Valorant (tier 3 = Iron 1 ... tier 27 = Radiant)
+            const rankNames = {
+              3: "Iron 1", 4: "Iron 2", 5: "Iron 3",
+              6: "Bronze 1", 7: "Bronze 2", 8: "Bronze 3",
+              9: "Silver 1", 10: "Silver 2", 11: "Silver 3",
+              12: "Gold 1", 13: "Gold 2", 14: "Gold 3",
+              15: "Plat 1", 16: "Plat 2", 17: "Plat 3",
+              18: "Diamond 1", 19: "Diamond 2", 20: "Diamond 3",
+              21: "Ascendant 1", 22: "Ascendant 2", 23: "Ascendant 3",
+              24: "Immortal 1", 25: "Immortal 2", 26: "Immortal 3",
+              27: "Radiant"
+            }
+
+            // Convertir chaque match en score absolu (tier * 100 + RR)
+            const scores = history.map(h => ({
+              score: h.currenttier * 100 + h.ranking_in_tier,
+              tier: h.currenttier,
+              rr: h.ranking_in_tier,
+              change: h.mmr_change_to_last_game,
+              rankName: h.currenttierpatched
+            }))
+
+            const minScore = Math.min(...scores.map(s => s.score))
+            const maxScore = Math.max(...scores.map(s => s.score))
+
+            // Déterminer les tiers à afficher (au moins 2, max 4)
+            const minTier = Math.floor(minScore / 100) - 1
+            const maxTier = Math.floor(maxScore / 100) + 1
+            const tiersToShow = []
+            for (let t = minTier; t <= maxTier; t++) {
+              tiersToShow.push(t)
+            }
+
+            // L'échelle va du bas du tier minimum au haut du tier maximum
+            const scaleMin = minTier * 100
+            const scaleMax = (maxTier + 1) * 100
+            const scaleRange = scaleMax - scaleMin
+
+            const chartWidth = 320
+            const chartHeight = 140
+            const paddingLeft = 70
+            const paddingRight = 10
+            const paddingTop = 10
+            const paddingBottom = 10
+            const innerWidth = chartWidth - paddingLeft - paddingRight
+            const innerHeight = chartHeight - paddingTop - paddingBottom
+
+            const points = scores.map((s, i) => {
+              const x = paddingLeft + (i / (scores.length - 1)) * innerWidth
+              const y = paddingTop + innerHeight - ((s.score - scaleMin) / scaleRange) * innerHeight
+              return { x, y, ...s }
+            })
+
+            const pointsStr = points.map(p => `${p.x},${p.y}`).join(" ")
+
+            return (
+              <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full h-52">
+                <defs>
+                  <linearGradient id="rank-gradient" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0%" stopColor="#6366f1" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+
+                {/* Lignes de séparation des tiers + labels */}
+                {tiersToShow.map((tier) => {
+                  const tierTopScore = (tier + 1) * 100
+                  const y = paddingTop + innerHeight - ((tierTopScore - scaleMin) / scaleRange) * innerHeight
+                  const yLabel = paddingTop + innerHeight - ((tier * 100 + 50 - scaleMin) / scaleRange) * innerHeight
+                  return (
+                    <g key={tier}>
+                      <line
+                        x1={paddingLeft}
+                        y1={y}
+                        x2={chartWidth - paddingRight}
+                        y2={y}
+                        stroke="#1e293b"
+                        strokeWidth="1"
+                        strokeDasharray="2,3"
+                      />
+                      <text
+                        x={paddingLeft - 6}
+                        y={yLabel + 3}
+                        fill="#64748b"
+                        fontSize="9"
+                        textAnchor="end"
+                      >
+                        {rankNames[tier] || `Tier ${tier}`}
+                      </text>
+                    </g>
+                  )
+                })}
+
+                {/* Zone remplie */}
+                <polygon
+                  fill="url(#rank-gradient)"
+                  points={`${paddingLeft},${paddingTop + innerHeight} ${pointsStr} ${chartWidth - paddingRight},${paddingTop + innerHeight}`}
+                />
+
+                {/* Ligne */}
+                <polyline
+                  fill="none"
+                  stroke="#6366f1"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                  points={pointsStr}
+                />
+
+                {/* Points */}
+                {points.map((p, i) => (
+                  <circle
+                    key={i}
+                    cx={p.x}
+                    cy={p.y}
+                    r="4"
+                    fill="#0f172a"
+                    stroke={p.change >= 0 ? "#10b981" : "#f43f5e"}
+                    strokeWidth="2"
+                  />
+                ))}
+              </svg>
+            )
+          })()}
+
+          <div className="flex justify-between mt-2 text-xs text-slate-500 pl-16 pr-2">
+            <span>Plus ancien</span>
+            <span>Plus récent</span>
           </div>
         </div>
       )}
