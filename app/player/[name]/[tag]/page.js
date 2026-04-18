@@ -87,7 +87,7 @@ export default async function PlayerPage({ params }) {
     if (match.result === "Win") agentStats[match.agent].wins++
   })
 
-const agentList = Object.entries(agentStats)
+  const agentList = Object.entries(agentStats)
     .map(([agent, stats]) => ({
       agent,
       wr: Math.round((stats.wins / stats.total) * 100),
@@ -121,6 +121,16 @@ const agentList = Object.entries(agentStats)
         </div>
       </div>
 
+      {/* SOUS-NAVIGATION */}
+      <div className="flex gap-2 border-b border-slate-800 pb-3">
+        <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-white bg-slate-800 rounded-lg">
+          Dashboard
+        </a>
+        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition">
+          Historique
+        </a>
+      </div>
+
       {/* RANG */}
       {mmr && (
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
@@ -142,7 +152,7 @@ const agentList = Object.entries(agentStats)
         </div>
       )}
 
-{/* COURBE DE PROGRESSION */}
+      {/* COURBE DE PROGRESSION */}
       {history.length > 1 && (
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
           <div className="flex items-center justify-between mb-6">
@@ -163,7 +173,6 @@ const agentList = Object.entries(agentStats)
           </div>
 
           {(() => {
-            // Noms des rangs Valorant (tier 3 = Iron 1 ... tier 27 = Radiant)
             const rankNames = {
               3: "Iron 1", 4: "Iron 2", 5: "Iron 3",
               6: "Bronze 1", 7: "Bronze 2", 8: "Bronze 3",
@@ -176,7 +185,6 @@ const agentList = Object.entries(agentStats)
               27: "Radiant"
             }
 
-            // Convertir chaque match en score absolu (tier * 100 + RR)
             const scores = history.map(h => ({
               score: h.currenttier * 100 + h.ranking_in_tier,
               tier: h.currenttier,
@@ -188,7 +196,6 @@ const agentList = Object.entries(agentStats)
             const minScore = Math.min(...scores.map(s => s.score))
             const maxScore = Math.max(...scores.map(s => s.score))
 
-            // Déterminer les tiers à afficher (au moins 2, max 4)
             const minTier = Math.floor(minScore / 100) - 1
             const maxTier = Math.floor(maxScore / 100) + 1
             const tiersToShow = []
@@ -196,7 +203,6 @@ const agentList = Object.entries(agentStats)
               tiersToShow.push(t)
             }
 
-            // L'échelle va du bas du tier minimum au haut du tier maximum
             const scaleMin = minTier * 100
             const scaleMax = (maxTier + 1) * 100
             const scaleRange = scaleMax - scaleMin
@@ -227,7 +233,6 @@ const agentList = Object.entries(agentStats)
                   </linearGradient>
                 </defs>
 
-                {/* Lignes de séparation des tiers + labels */}
                 {tiersToShow.map((tier) => {
                   const tierTopScore = (tier + 1) * 100
                   const y = paddingTop + innerHeight - ((tierTopScore - scaleMin) / scaleRange) * innerHeight
@@ -256,13 +261,11 @@ const agentList = Object.entries(agentStats)
                   )
                 })}
 
-                {/* Zone remplie */}
                 <polygon
                   fill="url(#rank-gradient)"
                   points={`${paddingLeft},${paddingTop + innerHeight} ${pointsStr} ${chartWidth - paddingRight},${paddingTop + innerHeight}`}
                 />
 
-                {/* Ligne */}
                 <polyline
                   fill="none"
                   stroke="#6366f1"
@@ -272,7 +275,6 @@ const agentList = Object.entries(agentStats)
                   points={pointsStr}
                 />
 
-                {/* Points */}
                 {points.map((p, i) => (
                   <circle
                     key={i}
@@ -373,8 +375,13 @@ const agentList = Object.entries(agentStats)
 
       {/* SESSION RECAP */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
-         <p className="text-slate-400 mb-4">{matches.length} derniers matchs compétitifs</p>
-        <div className="grid grid-cols-3 gap-4 text-center mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-slate-400">Session Recap</p>
+          <a href={`/player/${name}/${tag}/history`} className="text-xs text-indigo-400 hover:text-indigo-300 transition">
+            Voir l'historique complet →
+          </a>
+        </div>
+        <div className="grid grid-cols-3 gap-4 text-center">
           <div className="bg-slate-800 p-4 rounded-xl">
             <p className="text-emerald-400 text-xl font-bold">{wins}</p>
             <p className="text-sm text-slate-400">Wins</p>
@@ -387,22 +394,6 @@ const agentList = Object.entries(agentStats)
             <p className="text-indigo-400 text-xl font-bold">{winrate}%</p>
             <p className="text-sm text-slate-400">Winrate</p>
           </div>
-        </div>
-
-        {/* LISTE DES MATCHS */}
-        <div className="space-y-3">
-          {matches.map((match, i) => (
-            <div key={i} className={`flex items-center justify-between p-4 rounded-xl border ${match.result === "Win" ? "border-emerald-500/30 bg-emerald-500/5" : "border-rose-500/30 bg-rose-500/5"}`}>
-              <div className="flex items-center gap-3">
-                <span className={`font-bold text-sm px-2 py-1 rounded ${match.result === "Win" ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"}`}>
-                  {match.result}
-                </span>
-                <span className="text-white font-medium">{match.map}</span>
-                <span className="text-slate-400 text-sm">{match.agent}</span>
-              </div>
-              <span className="text-slate-300 font-mono">{match.kills}/{match.deaths}/{match.assists}</span>
-            </div>
-          ))}
         </div>
       </div>
 

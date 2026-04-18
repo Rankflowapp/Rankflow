@@ -1,3 +1,4 @@
+import Link from "next/link"
 import "./globals.css"
 
 export const metadata = {
@@ -10,15 +11,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className="relative bg-slate-950 text-white overflow-x-hidden">
 
-        {/* 🔥 BACKGROUND GLOW */}
+        {/* BACKGROUND GLOW */}
         <div className="fixed inset-0 -z-10">
-
-          {/* GLOW 1 */}
           <div className="absolute top-[-100px] left-[-100px] w-[400px] h-[400px] bg-indigo-500 opacity-20 blur-[120px]" />
-
-          {/* GLOW 2 */}
           <div className="absolute bottom-[-100px] right-[-100px] w-[400px] h-[400px] bg-emerald-500 opacity-20 blur-[120px]" />
-
         </div>
 
         {/* CONTENT */}
@@ -26,20 +22,14 @@ export default function RootLayout({ children }) {
 
           {/* HEADER */}
           <header className="flex items-center justify-between mb-8">
-
-            <div>
-              <h1 className="text-xl font-bold">Rankflow</h1>
-              <p className="text-xs text-slate-400">
-                Performance Tracker
-              </p>
-            </div>
+            <Link href="/" className="group">
+              <h1 className="text-xl font-bold group-hover:text-indigo-300 transition">Rankflow</h1>
+              <p className="text-xs text-slate-400">Performance Tracker</p>
+            </Link>
 
             <nav className="flex gap-6 text-sm text-slate-400">
-              <a href="/" className="hover:text-white transition">Home</a>
-              <a href="/maps" className="hover:text-white transition">Maps</a>
-              <a href="/agents" className="hover:text-white transition">Agents</a>
+              <Link href="/" className="hover:text-white transition">Home</Link>
             </nav>
-
           </header>
 
           {children}
