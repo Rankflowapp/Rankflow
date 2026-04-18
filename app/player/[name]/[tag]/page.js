@@ -87,13 +87,16 @@ export default async function PlayerPage({ params }) {
     if (match.result === "Win") agentStats[match.agent].wins++
   })
 
-  const bestAgent = Object.entries(agentStats)
+const agentList = Object.entries(agentStats)
     .map(([agent, stats]) => ({
       agent,
       wr: Math.round((stats.wins / stats.total) * 100),
       total: stats.total
     }))
-    .sort((a, b) => b.wr - a.wr)[0]
+    .sort((a, b) => b.wr - a.wr)
+
+  const bestAgent = agentList[0]
+  const worstAgent = agentList[agentList.length - 1]
 
   function getRankColor(tier) {
     if (tier >= 21) return "text-green-400"
@@ -311,6 +314,60 @@ export default async function PlayerPage({ params }) {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* MEILLEURE / PIRE MAP */}
+      {bestMap && worstMap && bestMap.map !== worstMap.map && (
+        <div className="grid grid-cols-2 gap-4">
+
+          <div className="bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/30 rounded-3xl p-6">
+            <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-2">Meilleure map</p>
+            <p className="text-3xl font-bold mb-1">{bestMap.map}</p>
+            <div className="flex items-baseline gap-2 mt-3">
+              <span className="text-2xl font-bold text-emerald-400">{bestMap.wr}%</span>
+              <span className="text-sm text-slate-400">winrate</span>
+            </div>
+            <p className="text-xs text-slate-500 mt-2">{bestMap.total} matchs joués</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-rose-500/10 to-slate-900 border border-rose-500/30 rounded-3xl p-6">
+            <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider mb-2">Pire map</p>
+            <p className="text-3xl font-bold mb-1">{worstMap.map}</p>
+            <div className="flex items-baseline gap-2 mt-3">
+              <span className="text-2xl font-bold text-rose-400">{worstMap.wr}%</span>
+              <span className="text-sm text-slate-400">winrate</span>
+            </div>
+            <p className="text-xs text-slate-500 mt-2">{worstMap.total} matchs joués</p>
+          </div>
+
+        </div>
+      )}
+
+      {/* MEILLEUR / PIRE AGENT */}
+      {bestAgent && worstAgent && bestAgent.agent !== worstAgent.agent && (
+        <div className="grid grid-cols-2 gap-4">
+
+          <div className="bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/30 rounded-3xl p-6">
+            <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-2">Meilleur agent</p>
+            <p className="text-3xl font-bold mb-1">{bestAgent.agent}</p>
+            <div className="flex items-baseline gap-2 mt-3">
+              <span className="text-2xl font-bold text-emerald-400">{bestAgent.wr}%</span>
+              <span className="text-sm text-slate-400">winrate</span>
+            </div>
+            <p className="text-xs text-slate-500 mt-2">{bestAgent.total} matchs joués</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-rose-500/10 to-slate-900 border border-rose-500/30 rounded-3xl p-6">
+            <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider mb-2">Pire agent</p>
+            <p className="text-3xl font-bold mb-1">{worstAgent.agent}</p>
+            <div className="flex items-baseline gap-2 mt-3">
+              <span className="text-2xl font-bold text-rose-400">{worstAgent.wr}%</span>
+              <span className="text-sm text-slate-400">winrate</span>
+            </div>
+            <p className="text-xs text-slate-500 mt-2">{worstAgent.total} matchs joués</p>
+          </div>
+
         </div>
       )}
 
