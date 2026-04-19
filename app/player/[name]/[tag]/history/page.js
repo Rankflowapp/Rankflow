@@ -56,10 +56,13 @@ export default async function HistoryPage({ params }) {
         <p className="text-slate-400 text-sm">{matches.length} derniers matchs compétitifs</p>
       </div>
 
-      {/* SOUS-NAVIGATION */}
+{/* SOUS-NAVIGATION */}
       <div className="flex gap-2 border-b border-slate-800 pb-3">
         <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition">
           Dashboard
+        </a>
+        <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition">
+          Coach
         </a>
         <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-white bg-slate-800 rounded-lg">
           Historique

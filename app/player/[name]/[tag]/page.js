@@ -26,7 +26,6 @@ export default async function PlayerPage({ params }) {
   const mmrData = await mmrRes.json()
   const mmr = mmrData.data?.current_data
 
-  // Récupérer l'historique MMR pour la courbe
   const historyRes = await fetch(
     `https://api.henrikdev.xyz/valorant/v1/mmr-history/eu/${name}/${tag}`,
     { headers: { Authorization: apiKey } }
@@ -47,56 +46,12 @@ export default async function PlayerPage({ params }) {
     return {
       map: match.metadata?.map?.name || "Unknown",
       result: won ? "Win" : "Loss",
-      kills: me?.stats?.kills || 0,
-      deaths: me?.stats?.deaths || 0,
-      assists: me?.stats?.assists || 0,
-      agent: me?.agent?.name || "Unknown",
     }
   }) || []
 
   const wins = matches.filter(m => m.result === "Win").length
   const losses = matches.filter(m => m.result === "Loss").length
   const winrate = matches.length > 0 ? Math.round((wins / matches.length) * 100) : 0
-
-  // Calculer les stats par map
-  const mapStats = {}
-  matches.forEach(match => {
-    if (!mapStats[match.map]) {
-      mapStats[match.map] = { wins: 0, total: 0 }
-    }
-    mapStats[match.map].total++
-    if (match.result === "Win") mapStats[match.map].wins++
-  })
-
-  const mapList = Object.entries(mapStats).map(([map, stats]) => ({
-    map,
-    wr: Math.round((stats.wins / stats.total) * 100),
-    total: stats.total
-  })).sort((a, b) => b.wr - a.wr)
-
-  const bestMap = mapList[0]
-  const worstMap = mapList[mapList.length - 1]
-
-  // Calculer le meilleur agent
-  const agentStats = {}
-  matches.forEach(match => {
-    if (!agentStats[match.agent]) {
-      agentStats[match.agent] = { wins: 0, total: 0 }
-    }
-    agentStats[match.agent].total++
-    if (match.result === "Win") agentStats[match.agent].wins++
-  })
-
-  const agentList = Object.entries(agentStats)
-    .map(([agent, stats]) => ({
-      agent,
-      wr: Math.round((stats.wins / stats.total) * 100),
-      total: stats.total
-    }))
-    .sort((a, b) => b.wr - a.wr)
-
-  const bestAgent = agentList[0]
-  const worstAgent = agentList[agentList.length - 1]
 
   function getRankColor(tier) {
     if (tier >= 21) return "text-green-400"
@@ -125,6 +80,9 @@ export default async function PlayerPage({ params }) {
       <div className="flex gap-2 border-b border-slate-800 pb-3">
         <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-white bg-slate-800 rounded-lg">
           Dashboard
+        </a>
+        <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition">
+          Coach
         </a>
         <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition">
           Historique
@@ -297,88 +255,12 @@ export default async function PlayerPage({ params }) {
         </div>
       )}
 
-      {/* SESSION PLAN */}
-      {bestMap && (
-        <div className="relative rounded-3xl overflow-hidden border border-slate-800 hover:border-indigo-400/40 transition">
-          <div className="bg-gradient-to-r from-slate-950/90 to-slate-900/70 p-6">
-            <p className="text-sm text-indigo-300 mb-2">🎮 Session Plan</p>
-            <h2 className="text-2xl font-semibold">Play {bestMap.map}</h2>
-            <p className="text-slate-300 mt-1">Avoid {worstMap.map}</p>
-            <div className="mt-4 flex gap-4 text-sm flex-wrap">
-              <div className="bg-black/40 px-4 py-2 rounded-xl border border-slate-700">
-                🎯 {bestAgent?.agent}
-              </div>
-              <div className="bg-black/40 px-4 py-2 rounded-xl border border-slate-700">
-                📊 {bestMap.wr}% WR sur {bestMap.map}
-              </div>
-              <div className="bg-black/40 px-4 py-2 rounded-xl border border-slate-700">
-                ⚠️ {worstMap.wr}% WR sur {worstMap.map}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MEILLEURE / PIRE MAP */}
-      {bestMap && worstMap && bestMap.map !== worstMap.map && (
-        <div className="grid grid-cols-2 gap-4">
-
-          <div className="bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/30 rounded-3xl p-6">
-            <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-2">Meilleure map</p>
-            <p className="text-3xl font-bold mb-1">{bestMap.map}</p>
-            <div className="flex items-baseline gap-2 mt-3">
-              <span className="text-2xl font-bold text-emerald-400">{bestMap.wr}%</span>
-              <span className="text-sm text-slate-400">winrate</span>
-            </div>
-            <p className="text-xs text-slate-500 mt-2">{bestMap.total} matchs joués</p>
-          </div>
-
-          <div className="bg-gradient-to-br from-rose-500/10 to-slate-900 border border-rose-500/30 rounded-3xl p-6">
-            <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider mb-2">Pire map</p>
-            <p className="text-3xl font-bold mb-1">{worstMap.map}</p>
-            <div className="flex items-baseline gap-2 mt-3">
-              <span className="text-2xl font-bold text-rose-400">{worstMap.wr}%</span>
-              <span className="text-sm text-slate-400">winrate</span>
-            </div>
-            <p className="text-xs text-slate-500 mt-2">{worstMap.total} matchs joués</p>
-          </div>
-
-        </div>
-      )}
-
-      {/* MEILLEUR / PIRE AGENT */}
-      {bestAgent && worstAgent && bestAgent.agent !== worstAgent.agent && (
-        <div className="grid grid-cols-2 gap-4">
-
-          <div className="bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/30 rounded-3xl p-6">
-            <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-2">Meilleur agent</p>
-            <p className="text-3xl font-bold mb-1">{bestAgent.agent}</p>
-            <div className="flex items-baseline gap-2 mt-3">
-              <span className="text-2xl font-bold text-emerald-400">{bestAgent.wr}%</span>
-              <span className="text-sm text-slate-400">winrate</span>
-            </div>
-            <p className="text-xs text-slate-500 mt-2">{bestAgent.total} matchs joués</p>
-          </div>
-
-          <div className="bg-gradient-to-br from-rose-500/10 to-slate-900 border border-rose-500/30 rounded-3xl p-6">
-            <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider mb-2">Pire agent</p>
-            <p className="text-3xl font-bold mb-1">{worstAgent.agent}</p>
-            <div className="flex items-baseline gap-2 mt-3">
-              <span className="text-2xl font-bold text-rose-400">{worstAgent.wr}%</span>
-              <span className="text-sm text-slate-400">winrate</span>
-            </div>
-            <p className="text-xs text-slate-500 mt-2">{worstAgent.total} matchs joués</p>
-          </div>
-
-        </div>
-      )}
-
       {/* SESSION RECAP */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
         <div className="flex items-center justify-between mb-4">
           <p className="text-slate-400">Session Recap</p>
-          <a href={`/player/${name}/${tag}/history`} className="text-xs text-indigo-400 hover:text-indigo-300 transition">
-            Voir l'historique complet →
+          <a href={`/player/${name}/${tag}/coach`} className="text-xs text-indigo-400 hover:text-indigo-300 transition">
+            Voir les conseils →
           </a>
         </div>
         <div className="grid grid-cols-3 gap-4 text-center">
