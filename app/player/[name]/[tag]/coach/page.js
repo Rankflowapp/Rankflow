@@ -109,6 +109,51 @@ export default async function CoachPage({ params }) {
     ]
   }
 
+function getSessionAlert(matches) {
+    if (matches.length === 0) return null
+
+    // Prendre les 5 derniers matchs (ordre chronologique inverse : le plus récent en premier)
+    const recent = matches.slice(0, 5)
+
+    // Compter les streaks en partant du match le plus récent
+    let currentStreak = 0
+    let streakType = null
+    for (const match of recent) {
+      if (streakType === null) {
+        streakType = match.result
+        currentStreak = 1
+      } else if (match.result === streakType) {
+        currentStreak++
+      } else {
+        break
+      }
+    }
+
+    // Détection loss streak
+    if (streakType === "Loss" && currentStreak >= 3) {
+      return {
+        type: "danger",
+        icon: "⚠️",
+        title: `${currentStreak} défaites consécutives`,
+        message: "Fais une pause avant de reprendre. Continuer maintenant risque de te faire perdre encore plus de RR."
+      }
+    }
+
+    // Détection win streak
+    if (streakType === "Win" && currentStreak >= 3) {
+      return {
+        type: "success",
+        icon: "🔥",
+        title: `${currentStreak} victoires consécutives`,
+        message: "Tu es en forme ! Continue tant que tu te sens bien."
+      }
+    }
+
+    return null
+  }
+
+  const sessionAlert = getSessionAlert(matches)
+
   const tips = mmr ? getRankTips(mmr.currenttier) : []
 
   return (
@@ -135,6 +180,27 @@ export default async function CoachPage({ params }) {
           Historique
         </a>
       </div>
+
+{/* ALERTE SESSION */}
+      {sessionAlert && (
+        <div className={`rounded-3xl p-6 border ${
+          sessionAlert.type === "danger"
+            ? "bg-rose-500/10 border-rose-500/30"
+            : "bg-emerald-500/10 border-emerald-500/30"
+        }`}>
+          <div className="flex items-start gap-4">
+            <span className="text-3xl">{sessionAlert.icon}</span>
+            <div>
+              <p className={`font-bold text-lg ${
+                sessionAlert.type === "danger" ? "text-rose-400" : "text-emerald-400"
+              }`}>
+                {sessionAlert.title}
+              </p>
+              <p className="text-slate-300 mt-1">{sessionAlert.message}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* SESSION PLAN */}
       {bestMap && (
