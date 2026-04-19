@@ -159,7 +159,7 @@ function getSessionAlert(matches) {
     const problematicAgent = agentList.find(
       a => a.total >= 3 && a.wr <= 35
     )
-    
+
     if (!problematicAgent) return null
 
     return {
@@ -168,6 +168,25 @@ function getSessionAlert(matches) {
       total: problematicAgent.total
     }
   }
+
+  function getMapWarning(mapList) {
+    if (mapList.length === 0) return null
+
+    // Trouver une map jouée 3+ fois avec un winrate ≤ 35%
+    const problematicMap = mapList.find(
+      m => m.total >= 3 && m.wr <= 35
+    )
+
+    if (!problematicMap) return null
+
+    return {
+      map: problematicMap.map,
+      wr: problematicMap.wr,
+      total: problematicMap.total
+    }
+  }
+
+  const mapWarning = getMapWarning(mapList)
 
   const agentWarning = getAgentWarning(agentList)
 
@@ -233,6 +252,24 @@ function getSessionAlert(matches) {
               <p className="text-slate-300 mt-1">
                 Tu ne gagnes que {agentWarning.wr}% de tes games sur {agentWarning.agent} ({agentWarning.total} matchs).
                 Essaye ton meilleur agent à la place pour reprendre confiance.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ALERTE MAP */}
+      {mapWarning && (
+        <div className="rounded-3xl p-6 border bg-orange-500/10 border-orange-500/30">
+          <div className="flex items-start gap-4">
+            <span className="text-3xl">🗺️</span>
+            <div>
+              <p className="font-bold text-lg text-orange-400">
+                Évite {mapWarning.map} en ce moment
+              </p>
+              <p className="text-slate-300 mt-1">
+                Tu n'as que {mapWarning.wr}% de winrate sur {mapWarning.map} ({mapWarning.total} matchs).
+                Dodge cette map jusqu'à ce que tu la retravailles en custom.
               </p>
             </div>
           </div>
