@@ -30,7 +30,9 @@ export default function RootLayout({ children }) {
           {/* HEADER */}
           <header className="flex items-center justify-between mb-8">
             <Link href="/" className="group">
-              <h1 className="text-xl font-bold group-hover:text-indigo-300 transition">Rankflow</h1>
+              <h1 className="text-xl font-bold tracking-tight group-hover:text-[#FF4654] transition">
+             Rankflow
+            </h1>
               <p className="text-xs text-slate-400">Performance Tracker</p>
             </Link>
 

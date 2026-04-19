@@ -228,15 +228,15 @@ function getSessionAlert(matches) {
 {/* ALERTE SESSION */}
       {sessionAlert && (
         <div className={`rounded-3xl p-6 border ${
-          sessionAlert.type === "danger"
-            ? "bg-rose-500/10 border-rose-500/30"
+         sessionAlert.type === "danger"
+            ? "bg-[#FF4654]/10 border-[#FF4654]/40 shadow-lg shadow-[#FF4654]/10"
             : "bg-emerald-500/10 border-emerald-500/30"
         }`}>
           <div className="flex items-start gap-4">
             <span className="text-3xl">{sessionAlert.icon}</span>
             <div>
               <p className={`font-bold text-lg ${
-                sessionAlert.type === "danger" ? "text-rose-400" : "text-emerald-400"
+                sessionAlert.type === "danger" ? "text-[#FF4654]" : "text-emerald-400"
               }`}>
                 {sessionAlert.title}
               </p>
