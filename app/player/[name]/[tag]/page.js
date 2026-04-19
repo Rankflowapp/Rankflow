@@ -270,18 +270,18 @@ export default async function PlayerPage({ params }) {
             <span className="group-hover:translate-x-0.5 transition">→</span>
           </a>
         </div>
-        <div className="grid grid-cols-3 gap-4 text-center">
-          <div className="bg-slate-800 p-4 rounded-xl">
-            <p className="text-emerald-400 text-xl font-bold">{wins}</p>
-            <p className="text-sm text-slate-400">Wins</p>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-gradient-to-b from-emerald-500/10 to-transparent border border-emerald-500/20 p-5 rounded-2xl text-center">
+            <p className="text-3xl font-bold text-emerald-400 tracking-tight">{wins}</p>
+            <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Wins</p>
           </div>
-          <div className="bg-slate-800 p-4 rounded-xl">
-            <p className="text-rose-400 text-xl font-bold">{losses}</p>
-            <p className="text-sm text-slate-400">Losses</p>
+          <div className="bg-gradient-to-b from-rose-500/10 to-transparent border border-rose-500/20 p-5 rounded-2xl text-center">
+            <p className="text-3xl font-bold text-rose-400 tracking-tight">{losses}</p>
+            <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Losses</p>
           </div>
-          <div className="bg-slate-800 p-4 rounded-xl">
-            <p className="text-indigo-400 text-xl font-bold">{winrate}%</p>
-            <p className="text-sm text-slate-400">Winrate</p>
+          <div className="bg-gradient-to-b from-indigo-500/10 to-transparent border border-indigo-500/20 p-5 rounded-2xl text-center">
+            <p className="text-3xl font-bold text-indigo-400 tracking-tight">{winrate}%</p>
+            <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Winrate</p>
           </div>
         </div>
       </div>

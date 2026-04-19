@@ -95,18 +95,18 @@ export default async function MapDetailPage({ params }) {
       ) : (
         <>
           {/* STATS GLOBALES */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-center">
-              <p className="text-emerald-400 text-3xl font-bold">{wins}</p>
-              <p className="text-sm text-slate-400 mt-1">Wins</p>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-gradient-to-b from-emerald-500/10 to-transparent border border-emerald-500/20 p-5 rounded-2xl text-center">
+              <p className="text-3xl font-bold text-emerald-400 tracking-tight">{wins}</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Wins</p>
             </div>
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-center">
-              <p className="text-rose-400 text-3xl font-bold">{losses}</p>
-              <p className="text-sm text-slate-400 mt-1">Losses</p>
+            <div className="bg-gradient-to-b from-rose-500/10 to-transparent border border-rose-500/20 p-5 rounded-2xl text-center">
+              <p className="text-3xl font-bold text-rose-400 tracking-tight">{losses}</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Losses</p>
             </div>
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-center">
-              <p className={`text-3xl font-bold ${getWrColor(winrate)}`}>{winrate}%</p>
-              <p className="text-sm text-slate-400 mt-1">Winrate</p>
+            <div className="bg-gradient-to-b from-indigo-500/10 to-transparent border border-indigo-500/20 p-5 rounded-2xl text-center">
+              <p className={`text-3xl font-bold tracking-tight ${getWrColor(winrate)}`}>{winrate}%</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Winrate</p>
             </div>
           </div>
 
