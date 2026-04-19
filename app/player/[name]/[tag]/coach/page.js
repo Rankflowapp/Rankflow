@@ -152,6 +152,25 @@ function getSessionAlert(matches) {
     return null
   }
 
+  function getAgentWarning(agentList) {
+    if (agentList.length === 0) return null
+
+    // Trouver un agent joué 3+ fois avec un winrate ≤ 35%
+    const problematicAgent = agentList.find(
+      a => a.total >= 3 && a.wr <= 35
+    )
+    
+    if (!problematicAgent) return null
+
+    return {
+      agent: problematicAgent.agent,
+      wr: problematicAgent.wr,
+      total: problematicAgent.total
+    }
+  }
+
+  const agentWarning = getAgentWarning(agentList)
+
   const sessionAlert = getSessionAlert(matches)
 
   const tips = mmr ? getRankTips(mmr.currenttier) : []
@@ -197,6 +216,24 @@ function getSessionAlert(matches) {
                 {sessionAlert.title}
               </p>
               <p className="text-slate-300 mt-1">{sessionAlert.message}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ALERTE AGENT */}
+      {agentWarning && (
+        <div className="rounded-3xl p-6 border bg-amber-500/10 border-amber-500/30">
+          <div className="flex items-start gap-4">
+            <span className="text-3xl">🎭</span>
+            <div>
+              <p className="font-bold text-lg text-amber-400">
+                {agentWarning.agent} te ralentit
+              </p>
+              <p className="text-slate-300 mt-1">
+                Tu ne gagnes que {agentWarning.wr}% de tes games sur {agentWarning.agent} ({agentWarning.total} matchs).
+                Essaye ton meilleur agent à la place pour reprendre confiance.
+              </p>
             </div>
           </div>
         </div>
