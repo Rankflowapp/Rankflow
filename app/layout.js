@@ -1,5 +1,12 @@
 import Link from "next/link"
+import { Space_Grotesk } from "next/font/google"
 import "./globals.css"
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-space-grotesk",
+})
 
 export const metadata = {
   title: "Rankflow",
@@ -8,8 +15,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className="relative bg-slate-950 text-white overflow-x-hidden">
+    <html lang="en" className={spaceGrotesk.variable}>
+      <body className="relative bg-slate-950 text-white overflow-x-hidden font-sans">
 
         {/* BACKGROUND GLOW */}
         <div className="fixed inset-0 -z-10">
