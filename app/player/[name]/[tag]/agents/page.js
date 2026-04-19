@@ -105,7 +105,7 @@ export default async function AgentsPage({ params }) {
           <Link
             key={agent.agent}
             href={`/player/${name}/${tag}/agent/${agent.agent}`}
-            className={`block bg-slate-900 border rounded-2xl p-5 transition ${getWrBorder(agent.wr)}`}
+            className={`block bg-slate-900 border rounded-2xl p-5 card-interactive ${getWrBorder(agent.wr)}`}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">

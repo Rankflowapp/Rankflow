@@ -97,7 +97,7 @@ export default async function PlayerPage({ params }) {
 
       {/* RANG */}
       {mmr && (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 card-hover">
           <p className="text-slate-400 text-sm mb-3">Rang actuel</p>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -118,7 +118,7 @@ export default async function PlayerPage({ params }) {
 
       {/* COURBE DE PROGRESSION */}
       {history.length > 1 && (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 card-hover">
           <div className="flex items-center justify-between mb-6">
             <div>
               <p className="text-slate-400 text-sm">Progression</p>
@@ -262,7 +262,7 @@ export default async function PlayerPage({ params }) {
       )}
 
       {/* SESSION RECAP */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 card-hover">
         <div className="flex items-center justify-between mb-4">
           <p className="text-slate-400">Session Recap</p>
           <a href={`/player/${name}/${tag}/coach`} className="text-xs text-indigo-400 hover:text-indigo-300 transition">

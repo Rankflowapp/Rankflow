@@ -101,7 +101,7 @@ export default async function MapsPage({ params }) {
           <Link
             key={map.map}
             href={`/player/${name}/${tag}/map/${map.map}`}
-            className={`block bg-slate-900 border rounded-2xl p-5 transition ${getWrBorder(map.wr)}`}
+            className={`block bg-slate-900 border rounded-2xl p-5 card-interactive ${getWrBorder(map.wr)}`}
           >
             <div className="flex items-center justify-between">
               <div>
