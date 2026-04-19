@@ -14,30 +14,66 @@ export default function HomePage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] gap-8">
+    <div className="flex flex-col items-center justify-center min-h-[70vh] gap-10">
 
-      <div className="text-center">
-        <h1 className="text-5xl font-bold mb-3">Rankflow</h1>
-        <p className="text-slate-400 text-lg">
-          Your pre-game decision tool for climbing in Valorant
+      {/* HEADLINE */}
+      <div className="text-center max-w-2xl">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#FF4654]/10 border border-[#FF4654]/30 rounded-full mb-6">
+          <span className="w-1.5 h-1.5 bg-[#FF4654] rounded-full animate-pulse"></span>
+          <span className="text-xs text-[#FF4654] uppercase tracking-wider font-semibold">Valorant Performance Tracker</span>
+        </div>
+
+        <h1 className="text-6xl font-bold tracking-tight mb-4">
+          Climb smarter.
+        </h1>
+
+        <p className="text-slate-400 text-lg leading-relaxed">
+          Analyse tes performances, identifie tes meilleures maps, reçois des conseils personnalisés.
+          <br />
+          <span className="text-slate-300">Rankflow, c'est ton coach avant chaque session.</span>
         </p>
       </div>
 
-      <form onSubmit={handleSearch} className="flex gap-3 w-full max-w-md">
-        <input
-          type="text"
-          placeholder="Sparni#EUW"
-          value={riotId}
-          onChange={(e) => setRiotId(e.target.value)}
-          className="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-        />
-       <button
-          type="submit"
-          className="bg-[#FF4654] hover:bg-[#ff5a66] transition px-6 py-3 rounded-xl font-semibold shadow-lg shadow-[#FF4654]/20 hover:shadow-[#FF4654]/40"
-        >
-          Search
-        </button>
+      {/* SEARCH BAR */}
+      <form onSubmit={handleSearch} className="w-full max-w-md">
+        <div className="flex gap-3">
+          <input
+            type="text"
+            placeholder="Sparni#EUW"
+            value={riotId}
+            onChange={(e) => setRiotId(e.target.value)}
+            className="flex-1 bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#FF4654]/50 focus:ring-2 focus:ring-[#FF4654]/20 transition"
+          />
+          <button
+            type="submit"
+            className="bg-[#FF4654] hover:bg-[#ff5a66] transition px-6 py-3 rounded-xl font-semibold shadow-lg shadow-[#FF4654]/20 hover:shadow-[#FF4654]/40"
+          >
+            Search
+          </button>
+        </div>
+        <p className="text-xs text-slate-500 text-center mt-3">
+          Entre ton Riot ID au format Nom#TAG
+        </p>
       </form>
+
+      {/* FEATURES TEASER */}
+      <div className="grid grid-cols-3 gap-4 w-full max-w-2xl mt-4">
+        <div className="text-center">
+          <div className="text-2xl mb-2">📊</div>
+          <p className="text-sm font-semibold text-slate-200">Dashboard</p>
+          <p className="text-xs text-slate-500 mt-1">Vue d'ensemble</p>
+        </div>
+        <div className="text-center">
+          <div className="text-2xl mb-2">🎯</div>
+          <p className="text-sm font-semibold text-slate-200">Coach</p>
+          <p className="text-xs text-slate-500 mt-1">Conseils adaptés</p>
+        </div>
+        <div className="text-center">
+          <div className="text-2xl mb-2">📈</div>
+          <p className="text-sm font-semibold text-slate-200">Progression</p>
+          <p className="text-xs text-slate-500 mt-1">Suivi du rang</p>
+        </div>
+      </div>
 
     </div>
   )
