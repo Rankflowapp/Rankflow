@@ -78,7 +78,7 @@ export default async function PlayerPage({ params }) {
 
       {/* SOUS-NAVIGATION */}
       <div className="flex gap-2 border-b border-slate-800 pb-3">
-        <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-white bg-slate-800 rounded-lg">
+        <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm">
           Dashboard
         </a>
         <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition">
@@ -265,8 +265,9 @@ export default async function PlayerPage({ params }) {
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 card-hover">
         <div className="flex items-center justify-between mb-4">
           <p className="text-slate-400">Session Recap</p>
-          <a href={`/player/${name}/${tag}/coach`} className="text-xs text-indigo-400 hover:text-indigo-300 transition">
-            Voir les conseils →
+          <a href={`/player/${name}/${tag}/coach`} className="inline-flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 transition group">
+            <span>Voir les conseils</span>
+            <span className="group-hover:translate-x-0.5 transition">→</span>
           </a>
         </div>
         <div className="grid grid-cols-3 gap-4 text-center">

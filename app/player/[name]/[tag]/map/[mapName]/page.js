@@ -80,8 +80,9 @@ export default async function MapDetailPage({ params }) {
 
       {/* EN-TÊTE */}
       <div>
-        <Link href={`/player/${name}/${tag}/maps`} className="text-sm text-indigo-400 hover:text-indigo-300 transition">
-          ← Retour aux maps
+        <Link href={`/player/${name}/${tag}`} className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-300 transition group">
+          <span className="group-hover:-translate-x-0.5 transition">←</span>
+          <span>Retour aux maps</span>
         </Link>
         <h1 className="text-4xl font-bold mt-2">{decodedMapName}</h1>
         <p className="text-slate-400 text-sm">{matches.length} matchs analysés</p>

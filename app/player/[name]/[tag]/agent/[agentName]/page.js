@@ -90,8 +90,9 @@ export default async function AgentDetailPage({ params }) {
 
       {/* EN-TÊTE */}
       <div>
-        <Link href={`/player/${name}/${tag}/agents`} className="text-sm text-indigo-400 hover:text-indigo-300 transition">
-          ← Retour aux agents
+        <Link href={`/player/${name}/${tag}`} className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-300 transition group">
+          <span className="group-hover:-translate-x-0.5 transition">←</span>
+          <span>Retour aux agents</span>
         </Link>
         <div className="flex items-center gap-4 mt-3">
           {agentIcon && (

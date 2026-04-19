@@ -73,8 +73,9 @@ export default async function AgentsPage({ params }) {
 
       {/* EN-TÊTE */}
       <div>
-        <Link href={`/player/${name}/${tag}`} className="text-sm text-indigo-400 hover:text-indigo-300 transition">
-          ← Retour au dashboard
+        <Link href={`/player/${name}/${tag}`} className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-300 transition group">
+          <span className="group-hover:-translate-x-0.5 transition">←</span>
+          <span>Retour au dashboard</span>
         </Link>
         <h1 className="text-3xl font-bold mt-2">Agents de {account.name}</h1>
         <p className="text-slate-400 text-sm">Tes stats sur les {matches.length} derniers matchs</p>
@@ -91,7 +92,7 @@ export default async function AgentsPage({ params }) {
         <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
           Maps
         </a>
-        <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-white bg-slate-800 rounded-lg whitespace-nowrap">
+        <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm">
           Agents
         </a>
         <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
