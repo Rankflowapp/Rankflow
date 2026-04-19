@@ -67,6 +67,9 @@ export default async function HistoryPage({ params }) {
         <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
           Maps
         </a>
+        <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
+          Agents
+        </a>
         <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-white bg-slate-800 rounded-lg">
           Historique
         </a>

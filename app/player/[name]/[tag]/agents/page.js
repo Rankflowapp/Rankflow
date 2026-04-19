@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-export default async function MapsPage({ params }) {
+export default async function AgentsPage({ params }) {
   const { name, tag } = await params
   const apiKey = process.env.HENRIK_API_KEY
 
@@ -31,25 +31,29 @@ export default async function MapsPage({ params }) {
     const myTeam = me?.team_id
     const won = match.teams?.find(t => t.team_id === myTeam)?.won
     return {
-      map: match.metadata?.map?.name || "Unknown",
+      agent: me?.agent?.name || "Unknown",
+      agentIcon: me?.agent?.small || null,
       result: won ? "Win" : "Loss",
     }
   }) || []
 
-  // Stats par map
-  const mapStats = {}
+  // Stats par agent
+  const agentStats = {}
   matches.forEach(match => {
-    if (!mapStats[match.map]) mapStats[match.map] = { wins: 0, total: 0 }
-    mapStats[match.map].total++
-    if (match.result === "Win") mapStats[match.map].wins++
+    if (!agentStats[match.agent]) {
+      agentStats[match.agent] = { wins: 0, total: 0, icon: match.agentIcon }
+    }
+    agentStats[match.agent].total++
+    if (match.result === "Win") agentStats[match.agent].wins++
   })
 
-  const mapList = Object.entries(mapStats).map(([map, stats]) => ({
-    map,
+  const agentList = Object.entries(agentStats).map(([agent, stats]) => ({
+    agent,
     wr: Math.round((stats.wins / stats.total) * 100),
     wins: stats.wins,
     losses: stats.total - stats.wins,
-    total: stats.total
+    total: stats.total,
+    icon: stats.icon
   })).sort((a, b) => b.wr - a.wr)
 
   function getWrColor(wr) {
@@ -72,7 +76,7 @@ export default async function MapsPage({ params }) {
         <Link href={`/player/${name}/${tag}`} className="text-sm text-indigo-400 hover:text-indigo-300 transition">
           ← Retour au dashboard
         </Link>
-        <h1 className="text-3xl font-bold mt-2">Maps de {account.name}</h1>
+        <h1 className="text-3xl font-bold mt-2">Agents de {account.name}</h1>
         <p className="text-slate-400 text-sm">Tes stats sur les {matches.length} derniers matchs</p>
       </div>
 
@@ -84,10 +88,10 @@ export default async function MapsPage({ params }) {
         <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
           Coach
         </a>
-        <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-white bg-slate-800 rounded-lg whitespace-nowrap">
+        <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
           Maps
         </a>
-        <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
+        <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-white bg-slate-800 rounded-lg whitespace-nowrap">
           Agents
         </a>
         <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
@@ -95,25 +99,30 @@ export default async function MapsPage({ params }) {
         </a>
       </div>
 
-      {/* LISTE DES MAPS */}
+      {/* LISTE DES AGENTS */}
       <div className="space-y-3">
-        {mapList.map((map) => (
+        {agentList.map((agent) => (
           <Link
-            key={map.map}
-            href={`/player/${name}/${tag}/map/${map.map}`}
-            className={`block bg-slate-900 border rounded-2xl p-5 transition ${getWrBorder(map.wr)}`}
+            key={agent.agent}
+            href={`/player/${name}/${tag}/agent/${agent.agent}`}
+            className={`block bg-slate-900 border rounded-2xl p-5 transition ${getWrBorder(agent.wr)}`}
           >
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xl font-bold">{map.map}</p>
-                <p className="text-xs text-slate-500 mt-1">
-                  {map.wins}W · {map.losses}L · {map.total} matchs
-                </p>
+              <div className="flex items-center gap-4">
+                {agent.icon && (
+                  <img src={agent.icon} className="w-12 h-12 rounded-lg" />
+                )}
+                <div>
+                  <p className="text-xl font-bold">{agent.agent}</p>
+                  <p className="text-xs text-slate-500 mt-1">
+                    {agent.wins}W · {agent.losses}L · {agent.total} matchs
+                  </p>
+                </div>
               </div>
 
               <div className="text-right">
-                <p className={`text-3xl font-bold ${getWrColor(map.wr)}`}>
-                  {map.wr}%
+                <p className={`text-3xl font-bold ${getWrColor(agent.wr)}`}>
+                  {agent.wr}%
                 </p>
                 <p className="text-xs text-slate-500">winrate</p>
               </div>
@@ -121,7 +130,7 @@ export default async function MapsPage({ params }) {
           </Link>
         ))}
 
-        {mapList.length === 0 && (
+        {agentList.length === 0 && (
           <div className="text-center py-12 text-slate-500">
             Aucun match trouvé
           </div>
