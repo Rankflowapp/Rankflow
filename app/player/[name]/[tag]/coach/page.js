@@ -229,19 +229,24 @@ function getSessionAlert(matches) {
 {/* ALERTE SESSION */}
       {sessionAlert && (
         <div className={`rounded-3xl p-6 border ${
-         sessionAlert.type === "danger"
-            ? "bg-[#FF4654]/10 border-[#FF4654]/40 shadow-lg shadow-[#FF4654]/10"
-            : "bg-emerald-500/10 border-emerald-500/30"
+          sessionAlert.type === "danger"
+            ? "bg-gradient-to-br from-[#FF4654]/15 via-[#FF4654]/5 to-transparent border-[#FF4654]/40 shadow-lg shadow-[#FF4654]/10"
+            : "bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent border-emerald-500/30"
         }`}>
           <div className="flex items-start gap-4">
             <span className="text-3xl">{sessionAlert.icon}</span>
-            <div>
-              <p className={`font-bold text-lg ${
+            <div className="flex-1">
+              <p className={`text-xs uppercase tracking-wider font-semibold mb-1 ${
                 sessionAlert.type === "danger" ? "text-[#FF4654]" : "text-emerald-400"
               }`}>
+                {sessionAlert.type === "danger" ? "Alerte session" : "Session en forme"}
+              </p>
+              <p className="font-bold text-lg text-white">
                 {sessionAlert.title}
               </p>
-              <p className="text-slate-300 mt-1">{sessionAlert.message}</p>
+              <p className="text-slate-300 mt-2 text-sm leading-relaxed">
+                {sessionAlert.message}
+              </p>
             </div>
           </div>
         </div>
@@ -249,15 +254,16 @@ function getSessionAlert(matches) {
 
       {/* ALERTE AGENT */}
       {agentWarning && (
-        <div className="rounded-3xl p-6 border bg-amber-500/10 border-amber-500/30">
+        <div className="rounded-3xl p-6 border bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border-amber-500/30">
           <div className="flex items-start gap-4">
             <span className="text-3xl">🎭</span>
-            <div>
-              <p className="font-bold text-lg text-amber-400">
+            <div className="flex-1">
+              <p className="text-xs text-amber-400 uppercase tracking-wider font-semibold mb-1">Agent à éviter</p>
+              <p className="font-bold text-lg text-white">
                 {agentWarning.agent} te ralentit
               </p>
-              <p className="text-slate-300 mt-1">
-                Tu ne gagnes que {agentWarning.wr}% de tes games sur {agentWarning.agent} ({agentWarning.total} matchs).
+              <p className="text-slate-300 mt-2 text-sm leading-relaxed">
+                Tu ne gagnes que <span className="text-amber-400 font-bold">{agentWarning.wr}%</span> de tes games sur {agentWarning.agent} ({agentWarning.total} matchs).
                 Essaye ton meilleur agent à la place pour reprendre confiance.
               </p>
             </div>
@@ -267,15 +273,16 @@ function getSessionAlert(matches) {
 
       {/* ALERTE MAP */}
       {mapWarning && (
-        <div className="rounded-3xl p-6 border bg-orange-500/10 border-orange-500/30">
+        <div className="rounded-3xl p-6 border bg-gradient-to-br from-orange-500/10 via-orange-500/5 to-transparent border-orange-500/30">
           <div className="flex items-start gap-4">
             <span className="text-3xl">🗺️</span>
-            <div>
-              <p className="font-bold text-lg text-orange-400">
+            <div className="flex-1">
+              <p className="text-xs text-orange-400 uppercase tracking-wider font-semibold mb-1">Map à éviter</p>
+              <p className="font-bold text-lg text-white">
                 Évite {mapWarning.map} en ce moment
               </p>
-              <p className="text-slate-300 mt-1">
-                Tu n'as que {mapWarning.wr}% de winrate sur {mapWarning.map} ({mapWarning.total} matchs).
+              <p className="text-slate-300 mt-2 text-sm leading-relaxed">
+                Tu n'as que <span className="text-orange-400 font-bold">{mapWarning.wr}%</span> de winrate sur {mapWarning.map} ({mapWarning.total} matchs).
                 Dodge cette map jusqu'à ce que tu la retravailles en custom.
               </p>
             </div>
