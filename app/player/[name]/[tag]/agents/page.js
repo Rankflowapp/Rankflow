@@ -54,18 +54,37 @@ export default async function AgentsPage({ params }) {
     losses: stats.total - stats.wins,
     total: stats.total,
     icon: stats.icon
-  })).sort((a, b) => b.wr - a.wr)
+  }))
 
-  function getWrColor(wr) {
-    if (wr >= 60) return "text-emerald-400"
-    if (wr >= 45) return "text-indigo-400"
-    return "text-rose-400"
-  }
+  // Séparer en 3 catégories
+  const bestAgents = agentList.filter(a => a.wr > 55).sort((a, b) => b.wr - a.wr)
+  const masteredAgents = agentList.filter(a => a.wr >= 45 && a.wr <= 55).sort((a, b) => b.wr - a.wr)
+  const worstAgents = agentList.filter(a => a.wr < 45).sort((a, b) => a.wr - b.wr)
 
-  function getWrBorder(wr) {
-    if (wr >= 60) return "border-emerald-500/30 hover:border-emerald-500/60"
-    if (wr >= 45) return "border-slate-700 hover:border-indigo-500/60"
-    return "border-rose-500/30 hover:border-rose-500/60"
+  function AgentCard({ agentData, borderColor, wrColor }) {
+    return (
+      <Link
+        href={`/player/${name}/${tag}/agent/${agentData.agent}`}
+        className={`block bg-slate-900 border rounded-2xl p-4 card-interactive ${borderColor}`}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {agentData.icon && (
+              <img src={agentData.icon} className="w-10 h-10 rounded-lg" />
+            )}
+            <div>
+              <p className="font-bold">{agentData.agent}</p>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {agentData.wins}W · {agentData.losses}L
+              </p>
+            </div>
+          </div>
+          <p className={`text-2xl font-bold ${wrColor}`}>
+            {agentData.wr}%
+          </p>
+        </div>
+      </Link>
+    )
   }
 
   return (
@@ -83,63 +102,102 @@ export default async function AgentsPage({ params }) {
 
       {/* SOUS-NAVIGATION */}
       <div className="flex gap-2 border-b border-slate-800 pb-3 overflow-x-auto">
-        <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Dashboard
-        </a>
-        <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Coach
-        </a>
-        <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Maps
-        </a>
-        <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm">
-          Agents
-        </a>
-        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Stats avancées
-        </a>
-        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Historique
-        </a>
+        <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Dashboard</a>
+        <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Coach</a>
+        <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Maps</a>
+        <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm whitespace-nowrap">Agents</a>
+        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Stats avancées</a>
+        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Historique</a>
       </div>
 
-      {/* LISTE DES AGENTS */}
-      <div className="space-y-3">
-        {agentList.map((agent) => (
-          <Link
-            key={agent.agent}
-            href={`/player/${name}/${tag}/agent/${agent.agent}`}
-            className={`block bg-slate-900 border rounded-2xl p-5 card-interactive ${getWrBorder(agent.wr)}`}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                {agent.icon && (
-                  <img src={agent.icon} className="w-12 h-12 rounded-lg" />
-                )}
-                <div>
-                  <p className="text-xl font-bold">{agent.agent}</p>
-                  <p className="text-xs text-slate-500 mt-1">
-                    {agent.wins}W · {agent.losses}L · {agent.total} matchs
-                  </p>
-                </div>
-              </div>
+      {/* 3 COLONNES */}
+      {agentList.length === 0 ? (
+        <div className="text-center py-12 text-slate-500">
+          Aucun match trouvé
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-3 gap-6">
 
-              <div className="text-right">
-                <p className={`text-3xl font-bold ${getWrColor(agent.wr)}`}>
-                  {agent.wr}%
-                </p>
-                <p className="text-xs text-slate-500">winrate</p>
+          {/* MEILLEURS AGENTS */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 pb-2 border-b border-emerald-500/20">
+              <span className="text-2xl">🔥</span>
+              <div>
+                <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider">À privilégier</p>
+                <p className="text-sm text-slate-400">Meilleurs agents</p>
               </div>
             </div>
-          </Link>
-        ))}
 
-        {agentList.length === 0 && (
-          <div className="text-center py-12 text-slate-500">
-            Aucun match trouvé
+            {bestAgents.length > 0 ? (
+              bestAgents.map(a => (
+                <AgentCard
+                  key={a.agent}
+                  agentData={a}
+                  borderColor="border-emerald-500/30 hover:border-emerald-500/60"
+                  wrColor="text-emerald-400"
+                />
+              ))
+            ) : (
+              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
+                <p className="text-sm text-slate-500">Aucun agent avec &gt;55% de WR</p>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+
+          {/* AGENTS MAÎTRISÉS */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 pb-2 border-b border-indigo-500/20">
+              <span className="text-2xl">⚖️</span>
+              <div>
+                <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wider">À consolider</p>
+                <p className="text-sm text-slate-400">Agents maîtrisés</p>
+              </div>
+            </div>
+
+            {masteredAgents.length > 0 ? (
+              masteredAgents.map(a => (
+                <AgentCard
+                  key={a.agent}
+                  agentData={a}
+                  borderColor="border-slate-700 hover:border-indigo-500/60"
+                  wrColor="text-indigo-400"
+                />
+              ))
+            ) : (
+              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
+                <p className="text-sm text-slate-500">Aucun agent entre 45% et 55%</p>
+              </div>
+            )}
+          </div>
+
+          {/* PIRES AGENTS */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 pb-2 border-b border-rose-500/20">
+              <span className="text-2xl">⚠️</span>
+              <div>
+                <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider">À éviter</p>
+                <p className="text-sm text-slate-400">Pires agents</p>
+              </div>
+            </div>
+
+            {worstAgents.length > 0 ? (
+              worstAgents.map(a => (
+                <AgentCard
+                  key={a.agent}
+                  agentData={a}
+                  borderColor="border-rose-500/30 hover:border-rose-500/60"
+                  wrColor="text-rose-400"
+                />
+              ))
+            ) : (
+              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
+                <p className="text-sm text-slate-500">Aucun agent avec &lt;45% de WR</p>
+              </div>
+            )}
+          </div>
+
+        </div>
+      )}
 
     </div>
   )
