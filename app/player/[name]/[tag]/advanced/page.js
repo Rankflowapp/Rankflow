@@ -64,6 +64,57 @@ export default async function AdvancedPage({ params }) {
 
   const firstKillRate = totalFirstDuels > 0 ? Math.round((firstKillsWon / totalFirstDuels) * 100) : 0
 
+  // Calculer le trade rate
+  let deathsTraded = 0
+  let totalDeaths = 0
+  const TRADE_WINDOW_MS = 5000 // 5 secondes pour qu'un trade compte
+
+  matches.forEach(match => {
+    const kills = match.kills || []
+
+    // Trier tous les kills par timestamp global
+    const sortedKills = [...kills].sort((a, b) => a.time_in_match_in_ms - b.time_in_match_in_ms)
+
+    // Trouver toutes mes morts
+    sortedKills.forEach((kill, i) => {
+      if (kill.victim?.puuid === myPuuid) {
+        totalDeaths++
+        const myKiller = kill.killer?.puuid
+        const myDeathTime = kill.time_in_match_in_ms
+
+        // Regarder les kills qui suivent dans la fenêtre de 5s
+        for (let j = i + 1; j < sortedKills.length; j++) {
+          const nextKill = sortedKills[j]
+          const timeDiff = nextKill.time_in_match_in_ms - myDeathTime
+
+          if (timeDiff > TRADE_WINDOW_MS) break
+
+          // Un coéquipier a-t-il tué mon tueur ?
+          const killerTeam = kill.killer?.team
+          if (
+            nextKill.victim?.puuid === myKiller &&
+            nextKill.killer?.team !== killerTeam
+          ) {
+            deathsTraded++
+            break
+          }
+        }
+      }
+    })
+  })
+
+  const tradeRate = totalDeaths > 0 ? Math.round((deathsTraded / totalDeaths) * 100) : 0
+
+  function getTradeInsight(value) {
+    if (value >= 60) return { text: "Excellent, tu joues bien en équipe", color: "text-emerald-400" }
+    if (value >= 45) return { text: "Bonne coordination avec tes coéquipiers", color: "text-emerald-400" }
+    if (value >= 30) return { text: "Correct, mais tu peux mieux te positionner avec tes teammates", color: "text-indigo-400" }
+    if (value >= 20) return { text: "Tu joues souvent trop isolé, rapproche-toi de ton équipe", color: "text-amber-400" }
+    return { text: "Tu meurs souvent sans apport pour ton équipe, évite les peeks solo", color: "text-rose-400" }
+  }
+
+  const tradeInsight = getTradeInsight(tradeRate)
+
   function getMetricColor(value, goodThreshold, badThreshold) {
     if (value >= goodThreshold) return "text-emerald-400"
     if (value <= badThreshold) return "text-rose-400"
@@ -169,6 +220,60 @@ export default async function AdvancedPage({ params }) {
           <div className="bg-gradient-to-b from-indigo-500/10 to-transparent border border-indigo-500/20 p-4 rounded-2xl text-center">
             <p className="text-2xl font-bold text-indigo-400 tracking-tight">{totalFirstDuels}</p>
             <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Total duels</p>
+          </div>
+        </div>
+      </div>
+
+      {/* TRADE RATE */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <p className="text-xs text-indigo-300 uppercase tracking-wider font-semibold mb-2">🤝 Trade Rate</p>
+            <h2 className="text-2xl font-bold">Tes morts traded</h2>
+            <p className="text-slate-400 text-sm mt-1">% de tes morts vengées par un coéquipier dans les 5s</p>
+          </div>
+          <div className="text-right">
+            <p className={`text-5xl font-bold tracking-tight ${getMetricColor(tradeRate, 50, 30)}`}>
+              {tradeRate}%
+            </p>
+            <p className="text-xs text-slate-500 mt-1">
+              {deathsTraded}/{totalDeaths} traded
+            </p>
+          </div>
+        </div>
+
+        {/* Barre de progression */}
+        <div className="relative h-2 bg-slate-800 rounded-full overflow-hidden mb-4">
+          <div
+            className={`absolute top-0 left-0 h-full rounded-full ${
+              tradeRate >= 50 ? "bg-emerald-500" :
+              tradeRate >= 30 ? "bg-indigo-500" : "bg-rose-500"
+            }`}
+            style={{ width: `${tradeRate}%` }}
+          />
+        </div>
+
+        <div className="flex justify-between text-xs text-slate-500 mb-4">
+          <span>0%</span>
+          <span>50%</span>
+          <span>100%</span>
+        </div>
+
+        {/* Insight coach */}
+        <div className="bg-slate-800/50 border border-slate-800 rounded-2xl p-4">
+          <p className="text-xs text-slate-400 mb-1 uppercase tracking-wider font-semibold">💡 Coach insight</p>
+          <p className={`text-sm font-medium ${tradeInsight.color}`}>{tradeInsight.text}</p>
+        </div>
+
+        {/* Détail */}
+        <div className="grid grid-cols-2 gap-3 mt-4">
+          <div className="bg-gradient-to-b from-emerald-500/10 to-transparent border border-emerald-500/20 p-4 rounded-2xl text-center">
+            <p className="text-2xl font-bold text-emerald-400 tracking-tight">{deathsTraded}</p>
+            <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Morts traded</p>
+          </div>
+          <div className="bg-gradient-to-b from-rose-500/10 to-transparent border border-rose-500/20 p-4 rounded-2xl text-center">
+            <p className="text-2xl font-bold text-rose-400 tracking-tight">{totalDeaths - deathsTraded}</p>
+            <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Morts non traded</p>
           </div>
         </div>
       </div>
