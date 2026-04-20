@@ -50,18 +50,32 @@ export default async function MapsPage({ params }) {
     wins: stats.wins,
     losses: stats.total - stats.wins,
     total: stats.total
-  })).sort((a, b) => b.wr - a.wr)
+  }))
 
-  function getWrColor(wr) {
-    if (wr >= 60) return "text-emerald-400"
-    if (wr >= 45) return "text-indigo-400"
-    return "text-rose-400"
-  }
+  // Séparer en 3 catégories
+  const bestMaps = mapList.filter(m => m.wr > 55).sort((a, b) => b.wr - a.wr)
+  const masteredMaps = mapList.filter(m => m.wr >= 45 && m.wr <= 55).sort((a, b) => b.wr - a.wr)
+  const worstMaps = mapList.filter(m => m.wr < 45).sort((a, b) => a.wr - b.wr)
 
-  function getWrBorder(wr) {
-    if (wr >= 60) return "border-emerald-500/30 hover:border-emerald-500/60"
-    if (wr >= 45) return "border-slate-700 hover:border-indigo-500/60"
-    return "border-rose-500/30 hover:border-rose-500/60"
+  function MapCard({ mapData, borderColor, wrColor }) {
+    return (
+      <Link
+        href={`/player/${name}/${tag}/map/${mapData.map}`}
+        className={`block bg-slate-900 border rounded-2xl p-4 card-interactive ${borderColor}`}
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-bold">{mapData.map}</p>
+            <p className="text-xs text-slate-500 mt-0.5">
+              {mapData.wins}W · {mapData.losses}L
+            </p>
+          </div>
+          <p className={`text-2xl font-bold ${wrColor}`}>
+            {mapData.wr}%
+          </p>
+        </div>
+      </Link>
+    )
   }
 
   return (
@@ -79,58 +93,102 @@ export default async function MapsPage({ params }) {
 
       {/* SOUS-NAVIGATION */}
       <div className="flex gap-2 border-b border-slate-800 pb-3 overflow-x-auto">
-        <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Dashboard
-        </a>
-        <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Coach
-        </a>
-        <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm">
-          Maps
-        </a>
-        <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Agents
-        </a>
-        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Stats avancées
-        </a>
-        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Historique
-        </a>
+        <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Dashboard</a>
+        <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Coach</a>
+        <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm whitespace-nowrap">Maps</a>
+        <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Agents</a>
+        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Stats avancées</a>
+        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Historique</a>
       </div>
 
-      {/* LISTE DES MAPS */}
-      <div className="space-y-3">
-        {mapList.map((map) => (
-          <Link
-            key={map.map}
-            href={`/player/${name}/${tag}/map/${map.map}`}
-            className={`block bg-slate-900 border rounded-2xl p-5 card-interactive ${getWrBorder(map.wr)}`}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xl font-bold">{map.map}</p>
-                <p className="text-xs text-slate-500 mt-1">
-                  {map.wins}W · {map.losses}L · {map.total} matchs
-                </p>
-              </div>
+      {/* 3 COLONNES */}
+      {mapList.length === 0 ? (
+        <div className="text-center py-12 text-slate-500">
+          Aucun match trouvé
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-3 gap-6">
 
-              <div className="text-right">
-                <p className={`text-3xl font-bold ${getWrColor(map.wr)}`}>
-                  {map.wr}%
-                </p>
-                <p className="text-xs text-slate-500">winrate</p>
+          {/* MEILLEURES MAPS */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 pb-2 border-b border-emerald-500/20">
+              <span className="text-2xl">🔥</span>
+              <div>
+                <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider">À privilégier</p>
+                <p className="text-sm text-slate-400">Meilleures maps</p>
               </div>
             </div>
-          </Link>
-        ))}
 
-        {mapList.length === 0 && (
-          <div className="text-center py-12 text-slate-500">
-            Aucun match trouvé
+            {bestMaps.length > 0 ? (
+              bestMaps.map(m => (
+                <MapCard
+                  key={m.map}
+                  mapData={m}
+                  borderColor="border-emerald-500/30 hover:border-emerald-500/60"
+                  wrColor="text-emerald-400"
+                />
+              ))
+            ) : (
+              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
+                <p className="text-sm text-slate-500">Aucune map avec &gt;55% de WR</p>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+
+          {/* MAPS MAÎTRISÉES */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 pb-2 border-b border-indigo-500/20">
+              <span className="text-2xl">⚖️</span>
+              <div>
+                <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wider">À consolider</p>
+                <p className="text-sm text-slate-400">Maps maîtrisées</p>
+              </div>
+            </div>
+
+            {masteredMaps.length > 0 ? (
+              masteredMaps.map(m => (
+                <MapCard
+                  key={m.map}
+                  mapData={m}
+                  borderColor="border-slate-700 hover:border-indigo-500/60"
+                  wrColor="text-indigo-400"
+                />
+              ))
+            ) : (
+              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
+                <p className="text-sm text-slate-500">Aucune map entre 45% et 55%</p>
+              </div>
+            )}
+          </div>
+
+          {/* PIRES MAPS */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 pb-2 border-b border-rose-500/20">
+              <span className="text-2xl">⚠️</span>
+              <div>
+                <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider">À éviter</p>
+                <p className="text-sm text-slate-400">Pires maps</p>
+              </div>
+            </div>
+
+            {worstMaps.length > 0 ? (
+              worstMaps.map(m => (
+                <MapCard
+                  key={m.map}
+                  mapData={m}
+                  borderColor="border-rose-500/30 hover:border-rose-500/60"
+                  wrColor="text-rose-400"
+                />
+              ))
+            ) : (
+              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
+                <p className="text-sm text-slate-500">Aucune map avec &lt;45% de WR</p>
+              </div>
+            )}
+          </div>
+
+        </div>
+      )}
 
     </div>
   )
