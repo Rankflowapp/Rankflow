@@ -1,4 +1,5 @@
 import Link from "next/link"
+import HistoryView from "./HistoryView"
 
 export default async function HistoryPage({ params }) {
   const { name, tag } = await params
@@ -20,11 +21,20 @@ export default async function HistoryPage({ params }) {
 
   const account = accountData.data
 
+  // Récupérer les matchs
   const matchesRes = await fetch(
     `https://api.henrikdev.xyz/valorant/v4/matches/eu/pc/${name}/${tag}?mode=competitive&size=20`,
     { headers: { Authorization: apiKey } }
   )
   const matchesData = await matchesRes.json()
+
+  // Récupérer l'historique MMR pour les RR par match
+  const historyRes = await fetch(
+    `https://api.henrikdev.xyz/valorant/v1/mmr-history/eu/${name}/${tag}`,
+    { headers: { Authorization: apiKey } }
+  )
+  const historyData = await historyRes.json()
+  const mmrHistory = historyData.data || []
 
   const matches = matchesData.data?.map(match => {
     const me = match.players?.find(p => p.puuid === account.puuid)
@@ -32,6 +42,12 @@ export default async function HistoryPage({ params }) {
     const won = match.teams?.find(t => t.team_id === myTeam)?.won
     const myTeamData = match.teams?.find(t => t.team_id === myTeam)
     const enemyTeamData = match.teams?.find(t => t.team_id !== myTeam)
+    const matchId = match.metadata?.match_id
+
+    // Chercher le RR correspondant à ce match dans l'historique MMR
+    const mmrEntry = mmrHistory.find(h => h.match_id === matchId)
+    const rrChange = mmrEntry ? mmrEntry.mmr_change_to_last_game : null
+
     return {
       map: match.metadata?.map?.name || "Unknown",
       result: won ? "Win" : "Loss",
@@ -41,13 +57,17 @@ export default async function HistoryPage({ params }) {
       agent: me?.agent?.name || "Unknown",
       agentIcon: me?.agent?.small || null,
       score: `${myTeamData?.rounds?.won || 0} - ${enemyTeamData?.rounds?.won || 0}`,
-      startedAt: match.metadata?.started_at || null,
+      rrChange,
     }
   }) || []
+
+  // Calculer le total RR de la session
+  const totalRr = matches.reduce((sum, m) => sum + (m.rrChange || 0), 0)
 
   return (
     <div className="space-y-6">
 
+      {/* EN-TÊTE */}
       <div>
         <Link href={`/player/${name}/${tag}`} className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-300 transition group">
           <span className="group-hover:-translate-x-0.5 transition">←</span>
@@ -57,69 +77,18 @@ export default async function HistoryPage({ params }) {
         <p className="text-slate-400 text-sm">{matches.length} derniers matchs compétitifs</p>
       </div>
 
-{/* SOUS-NAVIGATION */}
-      <div className="flex gap-2 border-b border-slate-800 pb-3">
-        <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition">
-          Dashboard
-        </a>
-        <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition">
-          Coach
-        </a>
-        <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Maps
-        </a>
-        <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Agents
-        </a>
-        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Stats avancées
-        </a>
-        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm">
-          Historique
-        </a>
+      {/* SOUS-NAVIGATION */}
+      <div className="flex gap-2 border-b border-slate-800 pb-3 overflow-x-auto">
+        <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Dashboard</a>
+        <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Coach</a>
+        <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Maps</a>
+        <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Agents</a>
+        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Stats avancées</a>
+        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm whitespace-nowrap">Historique</a>
       </div>
 
-      <div className="space-y-3">
-        {matches.map((match, i) => (
-          <div
-            key={i}
-            className={`flex items-center justify-between p-4 rounded-xl border ${
-              match.result === "Win"
-                ? "border-emerald-500/30 bg-emerald-500/5"
-                : "border-rose-500/30 bg-rose-500/5"
-            }`}
-          >
-            <div className="flex items-center gap-4">
-              {match.agentIcon && (
-                <img src={match.agentIcon} className="w-10 h-10 rounded-lg" />
-              )}
-              <div>
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`font-bold text-xs px-2 py-0.5 rounded ${
-                      match.result === "Win"
-                        ? "bg-emerald-500/20 text-emerald-400"
-                        : "bg-rose-500/20 text-rose-400"
-                    }`}
-                  >
-                    {match.result}
-                  </span>
-                  <span className="text-white font-semibold">{match.map}</span>
-                  <span className="text-slate-400 text-sm">· {match.agent}</span>
-                </div>
-                <p className="text-xs text-slate-500 mt-1">Score: {match.score}</p>
-              </div>
-            </div>
-
-            <div className="text-right">
-              <p className="text-slate-200 font-mono text-lg">
-                {match.kills}<span className="text-slate-500">/</span>{match.deaths}<span className="text-slate-500">/</span>{match.assists}
-              </p>
-              <p className="text-xs text-slate-500">K / D / A</p>
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* COMPOSANT CLIENT */}
+      <HistoryView matches={matches} totalRr={totalRr} />
 
     </div>
   )
