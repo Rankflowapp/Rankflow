@@ -23,9 +23,13 @@ export default function HomePage() {
           <span className="text-xs text-[#FF4654] uppercase tracking-wider font-semibold">Valorant Performance Tracker</span>
         </div>
 
-        <h1 className="text-6xl font-bold tracking-tight mb-4">
-          Climb smarter.
+        <h1 className="text-7xl md:text-8xl font-bold tracking-tighter mb-3 leading-none">
+          RANKFLOW
         </h1>
+
+        <p className="text-3xl md:text-4xl font-semibold text-slate-300 mb-6">
+          Climb smarter<span className="text-[#FF4654]">.</span>
+        </p>
 
         <p className="text-slate-400 text-lg leading-relaxed">
           Analyse tes performances, identifie tes meilleures maps, reçois des conseils personnalisés.
