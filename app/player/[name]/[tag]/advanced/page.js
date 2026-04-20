@@ -115,6 +115,68 @@ export default async function AdvancedPage({ params }) {
 
   const tradeInsight = getTradeInsight(tradeRate)
 
+  // Calculer le KAST (Kill, Assist, Survive, Trade)
+  let kastRounds = 0
+  let totalRounds = 0
+
+  matches.forEach(match => {
+    const rounds = match.rounds || []
+    const kills = match.kills || []
+
+    rounds.forEach(round => {
+      const roundId = round.id
+      totalRounds++
+
+      // Kills et assists du joueur dans ce round
+      const myRoundStat = round.stats?.find(s => s.player?.puuid === myPuuid)
+      const hasKill = (myRoundStat?.stats?.kills || 0) > 0
+
+      // Tous les kills du round pour trouver assists et traits
+      const roundKills = kills.filter(k => k.round === roundId)
+
+      // Assist : je suis dans les assistants d'un kill allié
+      const hasAssist = roundKills.some(k =>
+        k.assistants?.some(a => a.puuid === myPuuid)
+      )
+
+      // Est-ce que je suis mort dans ce round ?
+      const myDeath = roundKills.find(k => k.victim?.puuid === myPuuid)
+      const survived = !myDeath
+
+      // Traded : je suis mort mais un coéquipier a vengé dans 5s
+      let wasTraded = false
+      if (myDeath) {
+        const myDeathTime = myDeath.time_in_match_in_ms
+        const myKiller = myDeath.killer?.puuid
+        const killerTeam = myDeath.killer?.team
+
+        wasTraded = roundKills.some(k =>
+          k.victim?.puuid === myKiller &&
+          k.killer?.team !== killerTeam &&
+          k.time_in_match_in_ms > myDeathTime &&
+          k.time_in_match_in_ms - myDeathTime <= TRADE_WINDOW_MS
+        )
+      }
+
+      // Le joueur a contribué si au moins un critère est rempli
+      if (hasKill || hasAssist || survived || wasTraded) {
+        kastRounds++
+      }
+    })
+  })
+
+  const kast = totalRounds > 0 ? Math.round((kastRounds / totalRounds) * 100) : 0
+
+  function getKastInsight(value) {
+    if (value >= 75) return { text: "Niveau pro — impact énorme sur chaque round", color: "text-emerald-400" }
+    if (value >= 65) return { text: "Excellent, tu contribues régulièrement à ton équipe", color: "text-emerald-400" }
+    if (value >= 55) return { text: "Bon KAST, continue comme ça", color: "text-indigo-400" }
+    if (value >= 45) return { text: "Moyen — tu es parfois inexistant dans les rounds", color: "text-amber-400" }
+    return { text: "Faible impact — travaille ta survie et ton positionnement", color: "text-rose-400" }
+  }
+
+  const kastInsight = getKastInsight(kast)
+
   function getMetricColor(value, goodThreshold, badThreshold) {
     if (value >= goodThreshold) return "text-emerald-400"
     if (value <= badThreshold) return "text-rose-400"
@@ -274,6 +336,64 @@ export default async function AdvancedPage({ params }) {
           <div className="bg-gradient-to-b from-rose-500/10 to-transparent border border-rose-500/20 p-4 rounded-2xl text-center">
             <p className="text-2xl font-bold text-rose-400 tracking-tight">{totalDeaths - deathsTraded}</p>
             <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Morts non traded</p>
+          </div>
+        </div>
+      </div>
+
+      {/* KAST */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <p className="text-xs text-indigo-300 uppercase tracking-wider font-semibold mb-2">⭐ KAST</p>
+            <h2 className="text-2xl font-bold">Ton impact par round</h2>
+            <p className="text-slate-400 text-sm mt-1">% de rounds où tu contribues (Kill / Assist / Survive / Trade)</p>
+          </div>
+          <div className="text-right">
+            <p className={`text-5xl font-bold tracking-tight ${getMetricColor(kast, 65, 45)}`}>
+              {kast}%
+            </p>
+            <p className="text-xs text-slate-500 mt-1">
+              {kastRounds}/{totalRounds} rounds
+            </p>
+          </div>
+        </div>
+
+        {/* Barre de progression */}
+        <div className="relative h-2 bg-slate-800 rounded-full overflow-hidden mb-4">
+          <div
+            className={`absolute top-0 left-0 h-full rounded-full ${
+              kast >= 65 ? "bg-emerald-500" :
+              kast >= 45 ? "bg-indigo-500" : "bg-rose-500"
+            }`}
+            style={{ width: `${kast}%` }}
+          />
+        </div>
+
+        <div className="flex justify-between text-xs text-slate-500 mb-4">
+          <span>0%</span>
+          <span>50%</span>
+          <span>100%</span>
+        </div>
+
+        {/* Insight coach */}
+        <div className="bg-slate-800/50 border border-slate-800 rounded-2xl p-4">
+          <p className="text-xs text-slate-400 mb-1 uppercase tracking-wider font-semibold">💡 Coach insight</p>
+          <p className={`text-sm font-medium ${kastInsight.color}`}>{kastInsight.text}</p>
+        </div>
+
+        {/* Benchmark */}
+        <div className="grid grid-cols-3 gap-3 mt-4 text-center">
+          <div className="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Joueur moyen</p>
+            <p className="text-lg font-bold text-slate-300 mt-1">~60%</p>
+          </div>
+          <div className="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Ton KAST</p>
+            <p className={`text-lg font-bold mt-1 ${getMetricColor(kast, 65, 45)}`}>{kast}%</p>
+          </div>
+          <div className="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Niveau pro</p>
+            <p className="text-lg font-bold text-emerald-400 mt-1">75%+</p>
           </div>
         </div>
       </div>
