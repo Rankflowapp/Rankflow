@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { getAgentImage } from "@/app/agentImages"
+import { getAgentImage } from "../../../../agentImages"
 
 export default async function AgentsPage({ params }) {
   const { name, tag } = await params

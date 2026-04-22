@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { getMapImage } from "@/app/mapImages"
+import { getMapImage } from "../../../../mapImages"
 
 export default async function MapsPage({ params }) {
   const { name, tag } = await params

@@ -20,13 +20,16 @@ export default async function CoachPage({ params }) {
 
   const account = accountData.data
 
+  // Récupérer le rang
   const mmrRes = await fetch(
     `https://api.henrikdev.xyz/valorant/v2/mmr/eu/${name}/${tag}`,
     { headers: { Authorization: apiKey } }
   )
   const mmrData = await mmrRes.json()
-  const mmr = mmrData.data?.current_data
+  const currentTier = mmrData.data?.current_data?.currenttier || 0
+  const currentTierName = mmrData.data?.current_data?.currenttierpatched || "Unranked"
 
+  // Récupérer les matchs
   const matchesRes = await fetch(
     `https://api.henrikdev.xyz/valorant/v4/matches/eu/pc/${name}/${tag}?mode=competitive&size=20`,
     { headers: { Authorization: apiKey } }
@@ -55,11 +58,13 @@ export default async function CoachPage({ params }) {
   const mapList = Object.entries(mapStats).map(([map, stats]) => ({
     map,
     wr: Math.round((stats.wins / stats.total) * 100),
+    wins: stats.wins,
+    losses: stats.total - stats.wins,
     total: stats.total
-  })).sort((a, b) => b.wr - a.wr)
+  }))
 
-  const bestMap = mapList[0]
-  const worstMap = mapList[mapList.length - 1]
+  const bestMap = mapList.filter(m => m.total >= 2).sort((a, b) => b.wr - a.wr)[0]
+  const worstMap = mapList.filter(m => m.total >= 2).sort((a, b) => a.wr - b.wr)[0]
 
   // Stats par agent
   const agentStats = {}
@@ -69,130 +74,70 @@ export default async function CoachPage({ params }) {
     if (match.result === "Win") agentStats[match.agent].wins++
   })
 
-  const agentList = Object.entries(agentStats)
-    .map(([agent, stats]) => ({
-      agent,
-      wr: Math.round((stats.wins / stats.total) * 100),
-      total: stats.total
-    }))
-    .sort((a, b) => b.wr - a.wr)
+  const agentList = Object.entries(agentStats).map(([agent, stats]) => ({
+    agent,
+    wr: Math.round((stats.wins / stats.total) * 100),
+    wins: stats.wins,
+    losses: stats.total - stats.wins,
+    total: stats.total
+  }))
 
-  const bestAgent = agentList[0]
-  const worstAgent = agentList[agentList.length - 1]
+  const bestAgent = agentList.filter(a => a.total >= 2).sort((a, b) => b.wr - a.wr)[0]
+  const worstAgent = agentList.filter(a => a.total >= 2).sort((a, b) => a.wr - b.wr)[0]
 
+  // Détection streak
+  let currentStreak = 0
+  let streakType = null
+  for (const match of matches) {
+    if (streakType === null) {
+      streakType = match.result
+      currentStreak = 1
+    } else if (match.result === streakType) {
+      currentStreak++
+    } else {
+      break
+    }
+  }
+
+  // Alertes agent/map problématiques (min 3 games, WR <= 35%)
+  const problematicAgent = agentList.find(a => a.total >= 3 && a.wr <= 35)
+  const problematicMap = mapList.find(m => m.total >= 3 && m.wr <= 35)
+
+  // Conseils selon le rang
   function getRankTips(tier) {
     if (tier >= 3 && tier <= 8) {
+      // Iron / Bronze
       return [
-        "🎯 Travaille ton crosshair placement : vise toujours à hauteur de tête",
-        "💰 Apprends l'économie : save ou full buy, évite les force buy",
-        "🎧 Utilise le son : les pas et les tirs ennemis donnent des infos"
+        "Concentre-toi uniquement sur ton aim — ouvre Aim Lab ou le deathmatch pendant 15 min avant chaque session",
+        "Crosshair placement à hauteur de tête, toujours — 80% des duels se jouent là",
+        "Évite de sur-réfléchir les strats, ton équipe ne les exécutera pas parfaitement de toute façon",
       ]
     }
     if (tier >= 9 && tier <= 14) {
+      // Silver / Gold
       return [
-        "🗣️ Communique en callouts clairs : zone + HP + arme",
-        "🤝 Joue en équipe : évite les peeks solo sans info",
-        "⏱️ Gère ton timing : attends tes utilities avant de rush"
+        "Apprends à lire l'économie — save quand l'équipe est à <2500, force uniquement sur pistol followup",
+        "Utilise ton utility au début du round, pas à la fin — les infos valent plus que les frags",
+        "Stop de trade mal tes duels, attends que ton coéquipier soit en position",
       ]
     }
     if (tier >= 15 && tier <= 20) {
+      // Platinum / Diamond
       return [
-        "🔍 Joue pour l'info : un flash + swing > un tap solo",
-        "🎭 Varie tes setups : ne fais pas le même play chaque round",
-        "📊 Analyse les économies ennemies pour prédire leurs plays"
+        "Apprends 2-3 lineups par map (mollos, smokes post-plant) — ça change des rounds",
+        "Map control avant contact — jouez des utilities coordonnées pour gagner du terrain sans combattre",
+        "Mid-round calls : si le premier contact échoue, ayez un plan B immédiat (rotate, fake, stack)",
       ]
     }
+    // Ascendant+
     return [
-      "🧠 Adapte ton style au mid-round : reads vs anti-strat",
-      "🎯 Maximise l'impact de tes utilities (timing + placement)",
-      "📈 Focus sur la consistance : jouer propre > faire des highlights"
+      "Timings millimétrés — chaque util doit être lancé dans la seconde optimale du round",
+      "Utility combos avancés : flash + peek synchronisés avec l'équipe, pas en solo",
+      "Lecture des tendances adverses — adapte tes exécutions après 5-6 rounds d'observation",
     ]
   }
 
-function getSessionAlert(matches) {
-    if (matches.length === 0) return null
-
-    // Prendre les 5 derniers matchs (ordre chronologique inverse : le plus récent en premier)
-    const recent = matches.slice(0, 5)
-
-    // Compter les streaks en partant du match le plus récent
-    let currentStreak = 0
-    let streakType = null
-    for (const match of recent) {
-      if (streakType === null) {
-        streakType = match.result
-        currentStreak = 1
-      } else if (match.result === streakType) {
-        currentStreak++
-      } else {
-        break
-      }
-    }
-
-    // Détection loss streak
-    if (streakType === "Loss" && currentStreak >= 3) {
-      return {
-        type: "danger",
-        icon: "⚠️",
-        title: `${currentStreak} défaites consécutives`,
-        message: "Fais une pause avant de reprendre. Continuer maintenant risque de te faire perdre encore plus de RR."
-      }
-    }
-
-    // Détection win streak
-    if (streakType === "Win" && currentStreak >= 3) {
-      return {
-        type: "success",
-        icon: "🔥",
-        title: `${currentStreak} victoires consécutives`,
-        message: "Tu es en forme ! Continue tant que tu te sens bien."
-      }
-    }
-
-    return null
-  }
-
-  function getAgentWarning(agentList) {
-    if (agentList.length === 0) return null
-
-    // Trouver un agent joué 3+ fois avec un winrate ≤ 35%
-    const problematicAgent = agentList.find(
-      a => a.total >= 3 && a.wr <= 35
-    )
-
-    if (!problematicAgent) return null
-
-    return {
-      agent: problematicAgent.agent,
-      wr: problematicAgent.wr,
-      total: problematicAgent.total
-    }
-  }
-
-  function getMapWarning(mapList) {
-    if (mapList.length === 0) return null
-
-    // Trouver une map jouée 3+ fois avec un winrate ≤ 35%
-    const problematicMap = mapList.find(
-      m => m.total >= 3 && m.wr <= 35
-    )
-
-    if (!problematicMap) return null
-
-    return {
-      map: problematicMap.map,
-      wr: problematicMap.wr,
-      total: problematicMap.total
-    }
-  }
-
-  const mapWarning = getMapWarning(mapList)
-
-  const agentWarning = getAgentWarning(agentList)
-
-  const sessionAlert = getSessionAlert(matches)
-
-  const tips = mmr ? getRankTips(mmr.currenttier) : []
+  const rankTips = getRankTips(currentTier)
 
   return (
     <div className="space-y-6">
@@ -204,180 +149,170 @@ function getSessionAlert(matches) {
           <span>Retour au dashboard</span>
         </Link>
         <h1 className="text-3xl font-bold mt-2">Coach de {account.name}</h1>
-        <p className="text-slate-400 text-sm">Tes conseils personnalisés pour cette session</p>
+        <p className="text-slate-400 text-sm">Conseils personnalisés pour ta session</p>
       </div>
 
       {/* SOUS-NAVIGATION */}
-      <div className="flex gap-2 border-b border-slate-800 pb-3">
-        <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition">
-          Dashboard
-        </a>
-        <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm">
-          Coach
-        </a>
-        <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Maps
-        </a>
-        <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Agents
-        </a>
-        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Stats avancées
-        </a>
-        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition">
-          Historique
-        </a>
+      <div className="flex gap-2 border-b border-slate-800 pb-3 overflow-x-auto">
+        <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Dashboard</a>
+        <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm whitespace-nowrap">Coach</a>
+        <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Maps</a>
+        <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Agents</a>
+        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Stats avancées</a>
+        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Historique</a>
       </div>
 
-{/* ALERTE SESSION */}
-      {sessionAlert && (
-        <div className={`rounded-3xl p-6 border ${
-          sessionAlert.type === "danger"
-            ? "bg-gradient-to-br from-[#FF4654]/15 via-[#FF4654]/5 to-transparent border-[#FF4654]/40 shadow-lg shadow-[#FF4654]/10"
-            : "bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent border-emerald-500/30"
-        }`}>
-          <div className="flex items-start gap-4">
-            <span className="text-3xl">{sessionAlert.icon}</span>
-            <div className="flex-1">
-              <p className={`text-xs uppercase tracking-wider font-semibold mb-1 ${
-                sessionAlert.type === "danger" ? "text-[#FF4654]" : "text-emerald-400"
-              }`}>
-                {sessionAlert.type === "danger" ? "Alerte session" : "Session en forme"}
-              </p>
-              <p className="font-bold text-lg text-white">
-                {sessionAlert.title}
-              </p>
-              <p className="text-slate-300 mt-2 text-sm leading-relaxed">
-                {sessionAlert.message}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ALERTES COMPACTES */}
+      {(currentStreak >= 3 || problematicAgent || problematicMap) && (
+        <div className="space-y-2">
 
-      {/* ALERTE AGENT */}
-      {agentWarning && (
-        <div className="rounded-3xl p-6 border bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border-amber-500/30">
-          <div className="flex items-start gap-4">
-            <span className="text-3xl">🎭</span>
-            <div className="flex-1">
-              <p className="text-xs text-amber-400 uppercase tracking-wider font-semibold mb-1">Agent à éviter</p>
-              <p className="font-bold text-lg text-white">
-                {agentWarning.agent} te ralentit
-              </p>
-              <p className="text-slate-300 mt-2 text-sm leading-relaxed">
-                Tu ne gagnes que <span className="text-amber-400 font-bold">{agentWarning.wr}%</span> de tes games sur {agentWarning.agent} ({agentWarning.total} matchs).
-                Essaye ton meilleur agent à la place pour reprendre confiance.
+          {/* Streak */}
+          {currentStreak >= 3 && (
+            <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border-l-4 ${
+              streakType === "Loss"
+                ? "bg-[#FF4654]/5 border-l-[#FF4654] border-y border-r border-[#FF4654]/20"
+                : "bg-emerald-500/5 border-l-emerald-500 border-y border-r border-emerald-500/20"
+            }`}>
+              <span className="text-xl">{streakType === "Loss" ? "🔥" : "⚡"}</span>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-white">
+                  {streakType === "Loss" ? "Série de défaites en cours" : "Série de victoires en cours"}
+                </p>
+                <p className="text-xs text-slate-400">
+                  {streakType === "Loss"
+                    ? "Fais une pause ou switch de mode, le tilt se ressent"
+                    : "Continue sur cette lancée, tu es en confiance"}
+                </p>
+              </div>
+              <p className={`text-lg font-bold ${streakType === "Loss" ? "text-[#FF4654]" : "text-emerald-400"}`}>
+                {currentStreak}
               </p>
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {/* ALERTE MAP */}
-      {mapWarning && (
-        <div className="rounded-3xl p-6 border bg-gradient-to-br from-orange-500/10 via-orange-500/5 to-transparent border-orange-500/30">
-          <div className="flex items-start gap-4">
-            <span className="text-3xl">🗺️</span>
-            <div className="flex-1">
-              <p className="text-xs text-orange-400 uppercase tracking-wider font-semibold mb-1">Map à éviter</p>
-              <p className="font-bold text-lg text-white">
-                Évite {mapWarning.map} en ce moment
-              </p>
-              <p className="text-slate-300 mt-2 text-sm leading-relaxed">
-                Tu n'as que <span className="text-orange-400 font-bold">{mapWarning.wr}%</span> de winrate sur {mapWarning.map} ({mapWarning.total} matchs).
-                Dodge cette map jusqu'à ce que tu la retravailles en custom.
+          {/* Agent problématique */}
+          {problematicAgent && (
+            <div className="flex items-center gap-3 px-4 py-3 rounded-xl border-l-4 bg-amber-500/5 border-l-amber-500 border-y border-r border-amber-500/20">
+              <span className="text-xl">⚠️</span>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-white">
+                  Agent en difficulté : {problematicAgent.agent}
+                </p>
+                <p className="text-xs text-slate-400">
+                  Évite ce pick en ranked tant que tu ne l'as pas travaillé en custom
+                </p>
+              </div>
+              <p className="text-lg font-bold text-amber-400">
+                {problematicAgent.wr}%
               </p>
             </div>
-          </div>
+          )}
+
+          {/* Map problématique */}
+          {problematicMap && (
+            <div className="flex items-center gap-3 px-4 py-3 rounded-xl border-l-4 bg-orange-500/5 border-l-orange-500 border-y border-r border-orange-500/20">
+              <span className="text-xl">⚠️</span>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-white">
+                  Map défavorable : {problematicMap.map}
+                </p>
+                <p className="text-xs text-slate-400">
+                  Dodge ou joue-la en unrated pour travailler tes setups
+                </p>
+              </div>
+              <p className="text-lg font-bold text-orange-400">
+                {problematicMap.wr}%
+              </p>
+            </div>
+          )}
+
         </div>
       )}
 
       {/* SESSION PLAN */}
-      {bestMap && (
-        <div className="relative rounded-3xl overflow-hidden border border-slate-800 hover:border-indigo-400/40 transition">
-          <div className="bg-gradient-to-r from-slate-950/90 to-slate-900/70 p-6">
-            <p className="text-sm text-indigo-300 mb-2">🎮 Session Plan</p>
-            <h2 className="text-2xl font-semibold">Play {bestMap.map}</h2>
-            <p className="text-slate-300 mt-1">Avoid {worstMap.map}</p>
-            <div className="mt-4 flex gap-4 text-sm flex-wrap">
-              <div className="bg-black/40 px-4 py-2 rounded-xl border border-slate-700">
-                🎯 {bestAgent?.agent}
-              </div>
-              <div className="bg-black/40 px-4 py-2 rounded-xl border border-slate-700">
-                📊 {bestMap.wr}% WR sur {bestMap.map}
-              </div>
-              <div className="bg-black/40 px-4 py-2 rounded-xl border border-slate-700">
-                ⚠️ {worstMap.wr}% WR sur {worstMap.map}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+        <p className="text-xs text-indigo-300 uppercase tracking-wider font-semibold mb-4">🎯 Session Plan</p>
+        <div className="grid md:grid-cols-3 gap-4">
 
-      {/* CONSEILS ADAPTÉS AU RANG */}
-      {tips.length > 0 && mmr && (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <p className="text-sm text-indigo-300">💡 Conseils pour {mmr.currenttierpatched}</p>
+          <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/30 rounded-2xl p-5">
+            <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-2">✅ Meilleure map</p>
+            {bestMap ? (
+              <>
+                <p className="text-2xl font-bold text-white">{bestMap.map}</p>
+                <p className="text-sm text-slate-400 mt-1">{bestMap.wr}% WR · {bestMap.total} matchs</p>
+              </>
+            ) : (
+              <p className="text-slate-500 text-sm">Pas assez de données</p>
+            )}
           </div>
-          <div className="space-y-3">
-            {tips.map((tip, i) => (
-              <div key={i} className="flex items-start gap-3 p-3 bg-slate-800/50 rounded-xl border border-slate-800">
-                <p className="text-slate-200 text-sm leading-relaxed">{tip}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* MEILLEURE / PIRE MAP */}
-      {bestMap && worstMap && bestMap.map !== worstMap.map && (
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/30 rounded-3xl p-6">
-            <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-2">Meilleure map</p>
-            <p className="text-3xl font-bold mb-1">{bestMap.map}</p>
-            <div className="flex items-baseline gap-2 mt-3">
-              <span className="text-2xl font-bold text-emerald-400">{bestMap.wr}%</span>
-              <span className="text-sm text-slate-400">winrate</span>
-            </div>
-            <p className="text-xs text-slate-500 mt-2">{bestMap.total} matchs joués</p>
+          <div className="bg-gradient-to-br from-rose-500/10 to-transparent border border-rose-500/30 rounded-2xl p-5">
+            <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider mb-2">❌ À éviter</p>
+            {worstMap ? (
+              <>
+                <p className="text-2xl font-bold text-white">{worstMap.map}</p>
+                <p className="text-sm text-slate-400 mt-1">{worstMap.wr}% WR · {worstMap.total} matchs</p>
+              </>
+            ) : (
+              <p className="text-slate-500 text-sm">Pas assez de données</p>
+            )}
           </div>
-          <div className="bg-gradient-to-br from-rose-500/10 to-slate-900 border border-rose-500/30 rounded-3xl p-6">
-            <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider mb-2">Pire map</p>
-            <p className="text-3xl font-bold mb-1">{worstMap.map}</p>
-            <div className="flex items-baseline gap-2 mt-3">
-              <span className="text-2xl font-bold text-rose-400">{worstMap.wr}%</span>
-              <span className="text-sm text-slate-400">winrate</span>
-            </div>
-            <p className="text-xs text-slate-500 mt-2">{worstMap.total} matchs joués</p>
-          </div>
-        </div>
-      )}
 
-      {/* MEILLEUR / PIRE AGENT */}
-      {bestAgent && worstAgent && bestAgent.agent !== worstAgent.agent && (
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/30 rounded-3xl p-6">
-            <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-2">Meilleur agent</p>
-            <p className="text-3xl font-bold mb-1">{bestAgent.agent}</p>
-            <div className="flex items-baseline gap-2 mt-3">
-              <span className="text-2xl font-bold text-emerald-400">{bestAgent.wr}%</span>
-              <span className="text-sm text-slate-400">winrate</span>
-            </div>
-            <p className="text-xs text-slate-500 mt-2">{bestAgent.total} matchs joués</p>
+          <div className="bg-gradient-to-br from-indigo-500/10 to-transparent border border-indigo-500/30 rounded-2xl p-5">
+            <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-2">🎭 Agent suggéré</p>
+            {bestAgent ? (
+              <>
+                <p className="text-2xl font-bold text-white">{bestAgent.agent}</p>
+                <p className="text-sm text-slate-400 mt-1">{bestAgent.wr}% WR · {bestAgent.total} matchs</p>
+              </>
+            ) : (
+              <p className="text-slate-500 text-sm">Pas assez de données</p>
+            )}
           </div>
-          <div className="bg-gradient-to-br from-rose-500/10 to-slate-900 border border-rose-500/30 rounded-3xl p-6">
-            <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider mb-2">Pire agent</p>
-            <p className="text-3xl font-bold mb-1">{worstAgent.agent}</p>
-            <div className="flex items-baseline gap-2 mt-3">
-              <span className="text-2xl font-bold text-rose-400">{worstAgent.wr}%</span>
-              <span className="text-sm text-slate-400">winrate</span>
-            </div>
-            <p className="text-xs text-slate-500 mt-2">{worstAgent.total} matchs joués</p>
-          </div>
+
         </div>
-      )}
+      </div>
+
+      {/* CONSEILS SELON LE RANG */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <p className="text-xs text-indigo-300 uppercase tracking-wider font-semibold">💡 Conseils pour ton rang</p>
+          <span className="text-xs text-slate-500">· {currentTierName}</span>
+        </div>
+        <div className="space-y-3">
+          {rankTips.map((tip, i) => (
+            <div key={i} className="flex gap-3 items-start">
+              <span className="text-indigo-400 font-bold mt-0.5">{i + 1}.</span>
+              <p className="text-slate-300 leading-relaxed">{tip}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* CARDS BEST/WORST MAP ET AGENT */}
+      <div className="grid md:grid-cols-2 gap-6">
+
+        {/* Meilleure map */}
+        {bestMap && (
+          <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/30 rounded-3xl p-6">
+            <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-2">🗺️ Ta meilleure map</p>
+            <p className="text-3xl font-bold text-white">{bestMap.map}</p>
+            <p className="text-slate-400 text-sm mt-1">{bestMap.wins}W · {bestMap.losses}L · {bestMap.wr}% de winrate</p>
+            <p className="text-sm text-slate-300 mt-3">Force la queue sur cette map dès que possible.</p>
+          </div>
+        )}
+
+        {/* Meilleur agent */}
+        {bestAgent && (
+          <div className="bg-gradient-to-br from-indigo-500/10 to-transparent border border-indigo-500/30 rounded-3xl p-6">
+            <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-2">🎭 Ton meilleur agent</p>
+            <p className="text-3xl font-bold text-white">{bestAgent.agent}</p>
+            <p className="text-slate-400 text-sm mt-1">{bestAgent.wins}W · {bestAgent.losses}L · {bestAgent.wr}% de winrate</p>
+            <p className="text-sm text-slate-300 mt-3">C'est ton pick principal, continue à le maîtriser.</p>
+          </div>
+        )}
+
+      </div>
 
     </div>
   )
