@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { getMapImage } from "../../../../mapImages"
+import { fetchMapImages } from "../../../../mapImages"
 
 export default async function MapsPage({ params }) {
   const { name, tag } = await params
@@ -26,6 +26,9 @@ export default async function MapsPage({ params }) {
     { headers: { Authorization: apiKey } }
   )
   const matchesData = await matchesRes.json()
+
+  // Récupérer dynamiquement les images des maps
+  const mapImages = await fetchMapImages()
 
   const matches = matchesData.data?.map(match => {
     const me = match.players?.find(p => p.puuid === account.puuid)
@@ -59,7 +62,7 @@ export default async function MapsPage({ params }) {
   const worstMaps = mapList.filter(m => m.wr < 45).sort((a, b) => a.wr - b.wr)
 
   function MapCard({ mapData, borderColor, wrColor }) {
-    const mapImage = getMapImage(mapData.map)
+    const mapImage = mapImages[mapData.map] || null
 
     return (
       <Link

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { getAgentImage } from "../../../../agentImages"
+import { fetchAgentImages } from "../../../../agentImages"
 
 export default async function AgentsPage({ params }) {
   const { name, tag } = await params
@@ -26,6 +26,9 @@ export default async function AgentsPage({ params }) {
     { headers: { Authorization: apiKey } }
   )
   const matchesData = await matchesRes.json()
+
+  // Récupérer dynamiquement les images des agents
+  const agentImages = await fetchAgentImages()
 
   const matches = matchesData.data?.map(match => {
     const me = match.players?.find(p => p.puuid === account.puuid)
@@ -62,7 +65,7 @@ export default async function AgentsPage({ params }) {
   const worstAgents = agentList.filter(a => a.wr < 45).sort((a, b) => a.wr - b.wr)
 
   function AgentCard({ agentData, borderColor, wrColor }) {
-    const agentImage = getAgentImage(agentData.agent) || agentData.icon
+    const agentImage = agentImages[agentData.agent] || agentData.icon
 
     return (
       <Link
