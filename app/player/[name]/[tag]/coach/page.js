@@ -229,48 +229,108 @@ export default async function CoachPage({ params }) {
         </div>
       )}
 
-      {/* SESSION PLAN */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
-        <p className="text-xs text-indigo-300 uppercase tracking-wider font-semibold mb-4">🎯 Session Plan</p>
-        <div className="grid md:grid-cols-3 gap-4">
+{/* SESSION PLAN ENRICHI */}
+      <div className="bg-gradient-to-br from-indigo-500/10 via-slate-900 to-slate-900 border border-indigo-500/30 rounded-3xl p-6">
+        <p className="text-xs text-indigo-300 uppercase tracking-wider font-semibold mb-4">🎯 Ton Session Plan</p>
 
-          <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/30 rounded-2xl p-5">
-            <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-2">✅ Meilleure map</p>
-            {bestMap ? (
-              <>
-                <p className="text-2xl font-bold text-white">{bestMap.map}</p>
-                <p className="text-sm text-slate-400 mt-1">{bestMap.wr}% WR · {bestMap.total} matchs</p>
-              </>
-            ) : (
-              <p className="text-slate-500 text-sm">Pas assez de données</p>
-            )}
-          </div>
+        {/* OBJECTIF */}
+        <div className="mb-6">
+          <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-2">Objectif de la session</p>
+          {(() => {
+            // Calcul du RR net des derniers matchs pour définir l'objectif
+            const sessionWins = matches.filter(m => m.result === "Win").length
+            const sessionLosses = matches.filter(m => m.result === "Loss").length
+            const netScore = sessionWins - sessionLosses
 
-          <div className="bg-gradient-to-br from-rose-500/10 to-transparent border border-rose-500/30 rounded-2xl p-5">
-            <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider mb-2">❌ À éviter</p>
-            {worstMap ? (
-              <>
-                <p className="text-2xl font-bold text-white">{worstMap.map}</p>
-                <p className="text-sm text-slate-400 mt-1">{worstMap.wr}% WR · {worstMap.total} matchs</p>
-              </>
-            ) : (
-              <p className="text-slate-500 text-sm">Pas assez de données</p>
-            )}
-          </div>
+            let objective = ""
+            let objectiveColor = ""
 
-          <div className="bg-gradient-to-br from-indigo-500/10 to-transparent border border-indigo-500/30 rounded-2xl p-5">
-            <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-2">🎭 Agent suggéré</p>
-            {bestAgent ? (
-              <>
-                <p className="text-2xl font-bold text-white">{bestAgent.agent}</p>
-                <p className="text-sm text-slate-400 mt-1">{bestAgent.wr}% WR · {bestAgent.total} matchs</p>
-              </>
-            ) : (
-              <p className="text-slate-500 text-sm">Pas assez de données</p>
-            )}
-          </div>
+            if (netScore < -2) {
+              objective = "Stopper l'hémorragie, viser +10 RR minimum"
+              objectiveColor = "text-rose-400"
+            } else if (netScore > 2) {
+              objective = "Confirmer la montée, viser +20 RR cette session"
+              objectiveColor = "text-emerald-400"
+            } else {
+              objective = "Breakthrough, viser +25 RR pour décoller"
+              objectiveColor = "text-indigo-400"
+            }
 
+            return (
+              <p className={`text-2xl font-bold ${objectiveColor}`}>
+                {objective}
+              </p>
+            )
+          })()}
         </div>
+
+        {/* PLAN D'ACTION */}
+        <div className="space-y-3 mb-6">
+          <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Ton plan d'action</p>
+
+          {/* Action 1 : Maps à privilégier */}
+          <div className="flex gap-3 items-start bg-slate-800/50 border border-slate-800 rounded-2xl p-4">
+            <span className="bg-emerald-500/20 text-emerald-400 text-sm font-bold w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0">1</span>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-white">Maps à privilégier</p>
+              {bestMap ? (
+                <p className="text-sm text-slate-400 mt-1">
+                  Joue <span className="text-emerald-400 font-semibold">{bestMap.map}</span> quand elle tombe — {bestMap.wr}% de WR ({bestMap.wins}W/{bestMap.losses}L)
+                </p>
+              ) : (
+                <p className="text-sm text-slate-500 mt-1">Pas encore assez de données sur tes maps</p>
+              )}
+            </div>
+          </div>
+
+          {/* Action 2 : Pick recommandé */}
+          <div className="flex gap-3 items-start bg-slate-800/50 border border-slate-800 rounded-2xl p-4">
+            <span className="bg-indigo-500/20 text-indigo-400 text-sm font-bold w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0">2</span>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-white">Pick recommandé</p>
+              {bestAgent ? (
+                <p className="text-sm text-slate-400 mt-1">
+                  Prends <span className="text-indigo-400 font-semibold">{bestAgent.agent}</span> — tu y es à {bestAgent.wr}% de WR ({bestAgent.wins}W/{bestAgent.losses}L)
+                </p>
+              ) : (
+                <p className="text-sm text-slate-500 mt-1">Pas encore assez de données sur tes agents</p>
+              )}
+            </div>
+          </div>
+
+          {/* Action 3 : Vigilance */}
+          <div className="flex gap-3 items-start bg-slate-800/50 border border-slate-800 rounded-2xl p-4">
+            <span className="bg-amber-500/20 text-amber-400 text-sm font-bold w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0">3</span>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-white">Points de vigilance</p>
+              {worstMap || worstAgent ? (
+                <p className="text-sm text-slate-400 mt-1">
+                  {worstMap && <>Travaille <span className="text-amber-400 font-semibold">{worstMap.map}</span> en unrated ({worstMap.wr}% WR)</>}
+                  {worstMap && worstAgent && " · "}
+                  {worstAgent && <>Garde <span className="text-amber-400 font-semibold">{worstAgent.agent}</span> pour les customs ({worstAgent.wr}% WR)</>}
+                </p>
+              ) : (
+                <p className="text-sm text-slate-500 mt-1">Aucun point de vigilance majeur détecté</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* PRÉDICTION */}
+        {bestMap && bestAgent && (
+          <div className="bg-slate-800/50 border border-indigo-500/30 rounded-2xl p-4">
+            <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-2">📊 Prédiction</p>
+            {(() => {
+              // Moyenne du WR sur la meilleure map + meilleur agent
+              const avgWr = Math.round((bestMap.wr + bestAgent.wr) / 2)
+              return (
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  En respectant ce plan, tu as <span className="text-2xl font-bold text-indigo-300">{avgWr}%</span> de chances d'atteindre ton objectif cette session.
+                </p>
+              )
+            })()}
+          </div>
+        )}
       </div>
 
       {/* CONSEILS SELON LE RANG */}
