@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import ProTeams from "./components/ProTeams"
 
 export default function HomePage() {
   const [riotId, setRiotId] = useState("")
@@ -78,6 +79,9 @@ export default function HomePage() {
           <p className="text-xs text-slate-500 mt-1">Suivi du rang</p>
         </div>
       </div>
+
+      {/* SECTION PRO TEAMS */}
+      <ProTeams />
 
     </div>
   )
