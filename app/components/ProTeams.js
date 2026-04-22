@@ -37,10 +37,24 @@ export default function ProTeams() {
             key={idx}
             className="bg-slate-900 border border-slate-800 rounded-3xl p-5 hover:border-slate-700 transition"
           >
-            {/* En-tête équipe */}
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
-              <div>
-                <p className="font-bold text-white text-lg">{team.name}</p>
+           {/* En-tête équipe */}
+            <div className="flex items-center gap-4 mb-4 pb-3 border-b border-slate-800">
+              {/* Logo */}
+              <div className="w-14 h-14 rounded-xl bg-slate-800 flex items-center justify-center overflow-hidden flex-shrink-0">
+                {team.logo ? (
+                  <img
+                    src={team.logo}
+                    alt={team.name}
+                    className="w-full h-full object-contain p-1"
+                  />
+                ) : (
+                  <span className="text-2xl">🎮</span>
+                )}
+              </div>
+
+              {/* Nom + pays */}
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-white text-lg truncate">{team.name}</p>
                 <p className="text-xs text-slate-500 uppercase tracking-wider">{team.country}</p>
               </div>
             </div>
