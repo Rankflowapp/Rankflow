@@ -7,7 +7,7 @@ export const vctTeams = {
     {
       name: "BBL Esports",
       country: "Turquie",
-      logo: "https://owcdn.net/img/65b8ccef5e273.png",
+      logo: "/teams/bbl.png",
       players: [
         { ign: "Rosé", riotId: null },
         { ign: "Crewen", riotId: null },
@@ -19,7 +19,7 @@ export const vctTeams = {
     {
       name: "FNATIC",
       country: "Europe",
-      logo: "https://owcdn.net/img/62a40cc2b5e29.png",
+      logo: "/teams/fnatic.png",
       players: [
         { ign: "crashies", riotId: null },
         { ign: "Boaster", riotId: null },
@@ -31,7 +31,7 @@ export const vctTeams = {
     {
       name: "Team Vitality",
       country: "Europe",
-      logo: "https://owcdn.net/img/6466d7936fd86.png",
+      logo: "/teams/vitality.png",
       players: [
         { ign: "Chronicle", riotId: null },
         { ign: "Derke", riotId: null },
@@ -43,7 +43,7 @@ export const vctTeams = {
     {
       name: "GIANTX",
       country: "Europe",
-      logo: "https://owcdn.net/img/657b2f49210a3.png",
+      logo: "/teams/giantx.png",
       players: [
         { ign: "Cloud", riotId: null },
         { ign: "grubinho", riotId: null },
@@ -55,7 +55,7 @@ export const vctTeams = {
     {
       name: "Gentle Mates",
       country: "Europe",
-      logo: "https://owcdn.net/img/66701546055dd.png",
+      logo: "/teams/gentlemates.png",
       players: [
         { ign: "starxo", riotId: null },
         { ign: "GLYPH", riotId: null },
@@ -67,7 +67,7 @@ export const vctTeams = {
     {
       name: "Team Heretics",
       country: "Europe",
-      logo: "https://owcdn.net/img/637b7557a9225.png",
+      logo: "/teams/heretics.png",
       players: [
         { ign: "Boo", riotId: null },
         { ign: "RieNs", riotId: null },
@@ -79,7 +79,7 @@ export const vctTeams = {
     {
       name: "FUT Esports",
       country: "Turquie",
-      logo: "https://owcdn.net/img/632be99c96c64.png",
+      logo: "/teams/fut.png",
       players: [
         { ign: "sociablEE", riotId: null },
         { ign: "yetujey", riotId: null },
@@ -91,7 +91,7 @@ export const vctTeams = {
     {
       name: "Natus Vincere",
       country: "Europe",
-      logo: "https://owcdn.net/img/62a410a4e7b4f.png",
+      logo: "/teams/navi.png",
       players: [
         { ign: "Filu", riotId: null },
         { ign: "chloric", riotId: null },
@@ -103,7 +103,7 @@ export const vctTeams = {
     {
       name: "Karmine Corp",
       country: "Europe",
-      logo: "https://owcdn.net/img/627403aa2c53d.png",
+      logo: "/teams/kcorp.png",
       players: [
         { ign: "SUYGETSU", riotId: null },
         { ign: "Avez", riotId: null },
@@ -115,7 +115,7 @@ export const vctTeams = {
     {
       name: "Team Liquid",
       country: "Europe",
-      logo: "https://owcdn.net/img/640c38262824c.png",
+      logo: "/teams/liquid.png",
       players: [
         { ign: "nAts", riotId: null },
         { ign: "purp0", riotId: null },
@@ -127,7 +127,7 @@ export const vctTeams = {
     {
       name: "Eternal Fire",
       country: "Turquie",
-      logo: "https://owcdn.net/img/6628980dcdaea.png",
+      logo: "/teams/eternalfire.png",
       players: [
         { ign: "Izzy", riotId: null },
         { ign: "nekky", riotId: null },
@@ -139,7 +139,7 @@ export const vctTeams = {
     {
       name: "PCIFIC Esports",
       country: "Turquie",
-      logo: "https://owcdn.net/img/656e2ae2b8a48.png",
+      logo: "/teams/pcific.png",
       players: [
         { ign: "cNed", riotId: null },
         { ign: "al0rante", riotId: null },
