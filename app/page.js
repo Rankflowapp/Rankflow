@@ -23,7 +23,7 @@ export default function HomePage() {
           <span className="text-xs text-[#FF4654] uppercase tracking-wider font-semibold">Valorant Performance Tracker</span>
         </div>
 
-        <h1 className="text-7xl md:text-8xl font-bold tracking-tighter mb-3 leading-none">
+        <h1 className="text-7xl md:text-8xl font-bold tracking-tighter mb-3 leading-none" style={{textShadow: "0 0 30px rgba(255, 70, 84, 0.7), 0 0 60px rgba(255, 70, 84, 0.5), 0 0 100px rgba(255, 70, 84, 0.3)"}}>
           RANKFLOW
         </h1>
 
