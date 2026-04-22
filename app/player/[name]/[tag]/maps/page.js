@@ -61,9 +61,9 @@ export default async function MapsPage({ params }) {
     return (
       <Link
         href={`/player/${name}/${tag}/map/${mapData.map}`}
-        className={`block bg-slate-900 border rounded-2xl p-4 card-interactive ${borderColor}`}
+        className={`group block bg-slate-900 border rounded-2xl p-4 card-interactive ${borderColor}`}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-2">
           <div>
             <p className="font-bold">{mapData.map}</p>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -73,6 +73,10 @@ export default async function MapsPage({ params }) {
           <p className={`text-2xl font-bold ${wrColor}`}>
             {mapData.wr}%
           </p>
+        </div>
+        <div className="flex items-center gap-1 text-xs text-slate-500 group-hover:text-indigo-400 transition">
+          <span>Voir détails</span>
+          <span className="group-hover:translate-x-0.5 transition">→</span>
         </div>
       </Link>
     )
@@ -107,84 +111,90 @@ export default async function MapsPage({ params }) {
           Aucun match trouvé
         </div>
       ) : (
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-5">
 
           {/* MEILLEURES MAPS */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 pb-2 border-b border-emerald-500/20">
-              <span className="text-2xl">🔥</span>
+          <div className="bg-gradient-to-b from-emerald-500/10 to-transparent border border-emerald-500/30 rounded-3xl p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-3xl">🔥</span>
               <div>
                 <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider">À privilégier</p>
-                <p className="text-sm text-slate-400">Meilleures maps</p>
+                <p className="text-base text-white font-semibold">Meilleures maps</p>
               </div>
             </div>
 
-            {bestMaps.length > 0 ? (
-              bestMaps.map(m => (
-                <MapCard
-                  key={m.map}
-                  mapData={m}
-                  borderColor="border-emerald-500/30 hover:border-emerald-500/60"
-                  wrColor="text-emerald-400"
-                />
-              ))
-            ) : (
-              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
-                <p className="text-sm text-slate-500">Aucune map avec &gt;55% de WR</p>
-              </div>
-            )}
+            <div className="space-y-3">
+              {bestMaps.length > 0 ? (
+                bestMaps.map(m => (
+                  <MapCard
+                    key={m.map}
+                    mapData={m}
+                    borderColor="border-emerald-500/30 hover:border-emerald-500/60"
+                    wrColor="text-emerald-400"
+                  />
+                ))
+              ) : (
+                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
+                  <p className="text-sm text-slate-500">Aucune map avec &gt;55% de WR</p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* MAPS MAÎTRISÉES */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 pb-2 border-b border-indigo-500/20">
-              <span className="text-2xl">⚖️</span>
+          <div className="bg-gradient-to-b from-indigo-500/10 to-transparent border border-indigo-500/30 rounded-3xl p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-3xl">⚖️</span>
               <div>
                 <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wider">À consolider</p>
-                <p className="text-sm text-slate-400">Maps maîtrisées</p>
+                <p className="text-base text-white font-semibold">Maps maîtrisées</p>
               </div>
             </div>
 
-            {masteredMaps.length > 0 ? (
-              masteredMaps.map(m => (
-                <MapCard
-                  key={m.map}
-                  mapData={m}
-                  borderColor="border-slate-700 hover:border-indigo-500/60"
-                  wrColor="text-indigo-400"
-                />
-              ))
-            ) : (
-              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
-                <p className="text-sm text-slate-500">Aucune map entre 45% et 55%</p>
-              </div>
-            )}
+            <div className="space-y-3">
+              {masteredMaps.length > 0 ? (
+                masteredMaps.map(m => (
+                  <MapCard
+                    key={m.map}
+                    mapData={m}
+                    borderColor="border-slate-700 hover:border-indigo-500/60"
+                    wrColor="text-indigo-400"
+                  />
+                ))
+              ) : (
+                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
+                  <p className="text-sm text-slate-500">Aucune map entre 45% et 55%</p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* PIRES MAPS */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 pb-2 border-b border-rose-500/20">
-              <span className="text-2xl">⚠️</span>
+          <div className="bg-gradient-to-b from-rose-500/10 to-transparent border border-rose-500/30 rounded-3xl p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-3xl">⚠️</span>
               <div>
                 <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider">À éviter</p>
-                <p className="text-sm text-slate-400">Pires maps</p>
+                <p className="text-base text-white font-semibold">Pires maps</p>
               </div>
             </div>
 
-            {worstMaps.length > 0 ? (
-              worstMaps.map(m => (
-                <MapCard
-                  key={m.map}
-                  mapData={m}
-                  borderColor="border-rose-500/30 hover:border-rose-500/60"
-                  wrColor="text-rose-400"
-                />
-              ))
-            ) : (
-              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
-                <p className="text-sm text-slate-500">Aucune map avec &lt;45% de WR</p>
-              </div>
-            )}
+            <div className="space-y-3">
+              {worstMaps.length > 0 ? (
+                worstMaps.map(m => (
+                  <MapCard
+                    key={m.map}
+                    mapData={m}
+                    borderColor="border-rose-500/30 hover:border-rose-500/60"
+                    wrColor="text-rose-400"
+                  />
+                ))
+              ) : (
+                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
+                  <p className="text-sm text-slate-500">Aucune map avec &lt;45% de WR</p>
+                </div>
+              )}
+            </div>
           </div>
 
         </div>
