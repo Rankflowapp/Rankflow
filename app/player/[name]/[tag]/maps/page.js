@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { getMapImage } from "@/app/mapImages"
 
 export default async function MapsPage({ params }) {
   const { name, tag } = await params
@@ -58,25 +59,41 @@ export default async function MapsPage({ params }) {
   const worstMaps = mapList.filter(m => m.wr < 45).sort((a, b) => a.wr - b.wr)
 
   function MapCard({ mapData, borderColor, wrColor }) {
+    const mapImage = getMapImage(mapData.map)
+
     return (
       <Link
         href={`/player/${name}/${tag}/map/${mapData.map}`}
-        className={`group block bg-slate-900 border rounded-2xl p-4 card-interactive ${borderColor}`}
+        className={`group relative block bg-slate-900 border rounded-2xl overflow-hidden card-interactive ${borderColor}`}
       >
-        <div className="flex items-center justify-between mb-2">
-          <div>
-            <p className="font-bold">{mapData.map}</p>
-            <p className="text-xs text-slate-500 mt-0.5">
-              {mapData.wins}W · {mapData.losses}L
+        {/* Image de fond */}
+        {mapImage && (
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-40 group-hover:opacity-50 transition"
+            style={{ backgroundImage: `url(${mapImage})` }}
+          />
+        )}
+
+        {/* Dégradé sombre pour lisibilité */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-slate-900/40" />
+
+        {/* Contenu */}
+        <div className="relative p-4">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <p className="font-bold text-lg">{mapData.map}</p>
+              <p className="text-xs text-slate-400 mt-0.5">
+                {mapData.wins}W · {mapData.losses}L
+              </p>
+            </div>
+            <p className={`text-2xl font-bold ${wrColor}`}>
+              {mapData.wr}%
             </p>
           </div>
-          <p className={`text-2xl font-bold ${wrColor}`}>
-            {mapData.wr}%
-          </p>
-        </div>
-        <div className="flex items-center gap-1 text-xs text-slate-500 group-hover:text-indigo-400 transition">
-          <span>Voir détails</span>
-          <span className="group-hover:translate-x-0.5 transition">→</span>
+          <div className="flex items-center gap-1 text-xs text-slate-400 group-hover:text-indigo-300 transition">
+            <span>Voir détails</span>
+            <span className="group-hover:translate-x-0.5 transition">→</span>
+          </div>
         </div>
       </Link>
     )

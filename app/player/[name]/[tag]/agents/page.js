@@ -56,7 +56,6 @@ export default async function AgentsPage({ params }) {
     icon: stats.icon
   }))
 
-  // Séparer en 3 catégories
   const bestAgents = agentList.filter(a => a.wr > 55).sort((a, b) => b.wr - a.wr)
   const masteredAgents = agentList.filter(a => a.wr >= 45 && a.wr <= 55).sort((a, b) => b.wr - a.wr)
   const worstAgents = agentList.filter(a => a.wr < 45).sort((a, b) => a.wr - b.wr)
@@ -65,9 +64,9 @@ export default async function AgentsPage({ params }) {
     return (
       <Link
         href={`/player/${name}/${tag}/agent/${agentData.agent}`}
-        className={`block bg-slate-900 border rounded-2xl p-4 card-interactive ${borderColor}`}
+        className={`group block bg-slate-900 border rounded-2xl p-4 card-interactive ${borderColor}`}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-3">
             {agentData.icon && (
               <img src={agentData.icon} className="w-10 h-10 rounded-lg" />
@@ -82,6 +81,10 @@ export default async function AgentsPage({ params }) {
           <p className={`text-2xl font-bold ${wrColor}`}>
             {agentData.wr}%
           </p>
+        </div>
+        <div className="flex items-center gap-1 text-xs text-slate-500 group-hover:text-indigo-400 transition">
+          <span>Voir détails</span>
+          <span className="group-hover:translate-x-0.5 transition">→</span>
         </div>
       </Link>
     )
@@ -116,84 +119,90 @@ export default async function AgentsPage({ params }) {
           Aucun match trouvé
         </div>
       ) : (
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-5">
 
           {/* MEILLEURS AGENTS */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 pb-2 border-b border-emerald-500/20">
-              <span className="text-2xl">🔥</span>
+          <div className="bg-gradient-to-b from-emerald-500/10 to-transparent border border-emerald-500/30 rounded-3xl p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-3xl">🔥</span>
               <div>
                 <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider">À privilégier</p>
-                <p className="text-sm text-slate-400">Meilleurs agents</p>
+                <p className="text-base text-white font-semibold">Meilleurs agents</p>
               </div>
             </div>
 
-            {bestAgents.length > 0 ? (
-              bestAgents.map(a => (
-                <AgentCard
-                  key={a.agent}
-                  agentData={a}
-                  borderColor="border-emerald-500/30 hover:border-emerald-500/60"
-                  wrColor="text-emerald-400"
-                />
-              ))
-            ) : (
-              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
-                <p className="text-sm text-slate-500">Aucun agent avec &gt;55% de WR</p>
-              </div>
-            )}
+            <div className="space-y-3">
+              {bestAgents.length > 0 ? (
+                bestAgents.map(a => (
+                  <AgentCard
+                    key={a.agent}
+                    agentData={a}
+                    borderColor="border-emerald-500/30 hover:border-emerald-500/60"
+                    wrColor="text-emerald-400"
+                  />
+                ))
+              ) : (
+                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
+                  <p className="text-sm text-slate-500">Aucun agent avec &gt;55% de WR</p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* AGENTS MAÎTRISÉS */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 pb-2 border-b border-indigo-500/20">
-              <span className="text-2xl">⚖️</span>
+          <div className="bg-gradient-to-b from-indigo-500/10 to-transparent border border-indigo-500/30 rounded-3xl p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-3xl">⚖️</span>
               <div>
                 <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wider">À consolider</p>
-                <p className="text-sm text-slate-400">Agents maîtrisés</p>
+                <p className="text-base text-white font-semibold">Agents maîtrisés</p>
               </div>
             </div>
 
-            {masteredAgents.length > 0 ? (
-              masteredAgents.map(a => (
-                <AgentCard
-                  key={a.agent}
-                  agentData={a}
-                  borderColor="border-slate-700 hover:border-indigo-500/60"
-                  wrColor="text-indigo-400"
-                />
-              ))
-            ) : (
-              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
-                <p className="text-sm text-slate-500">Aucun agent entre 45% et 55%</p>
-              </div>
-            )}
+            <div className="space-y-3">
+              {masteredAgents.length > 0 ? (
+                masteredAgents.map(a => (
+                  <AgentCard
+                    key={a.agent}
+                    agentData={a}
+                    borderColor="border-slate-700 hover:border-indigo-500/60"
+                    wrColor="text-indigo-400"
+                  />
+                ))
+              ) : (
+                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
+                  <p className="text-sm text-slate-500">Aucun agent entre 45% et 55%</p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* PIRES AGENTS */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 pb-2 border-b border-rose-500/20">
-              <span className="text-2xl">⚠️</span>
+          <div className="bg-gradient-to-b from-rose-500/10 to-transparent border border-rose-500/30 rounded-3xl p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-3xl">⚠️</span>
               <div>
                 <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider">À éviter</p>
-                <p className="text-sm text-slate-400">Pires agents</p>
+                <p className="text-base text-white font-semibold">Pires agents</p>
               </div>
             </div>
 
-            {worstAgents.length > 0 ? (
-              worstAgents.map(a => (
-                <AgentCard
-                  key={a.agent}
-                  agentData={a}
-                  borderColor="border-rose-500/30 hover:border-rose-500/60"
-                  wrColor="text-rose-400"
-                />
-              ))
-            ) : (
-              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
-                <p className="text-sm text-slate-500">Aucun agent avec &lt;45% de WR</p>
-              </div>
-            )}
+            <div className="space-y-3">
+              {worstAgents.length > 0 ? (
+                worstAgents.map(a => (
+                  <AgentCard
+                    key={a.agent}
+                    agentData={a}
+                    borderColor="border-rose-500/30 hover:border-rose-500/60"
+                    wrColor="text-rose-400"
+                  />
+                ))
+              ) : (
+                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
+                  <p className="text-sm text-slate-500">Aucun agent avec &lt;45% de WR</p>
+                </div>
+              )}
+            </div>
           </div>
 
         </div>
