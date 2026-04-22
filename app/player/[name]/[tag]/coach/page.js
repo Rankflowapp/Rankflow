@@ -1,4 +1,13 @@
 import Link from "next/link"
+import {
+  calculateFirstDuelRate,
+  calculateTradeRate,
+  calculateKast,
+  calculatePistolWinrate,
+  calculateDpr,
+  calculateEcoVsFullBuy,
+  generatePersonalizedTips,
+} from "../../../../utils/advancedMetrics"
 
 export default async function CoachPage({ params }) {
   const { name, tag } = await params
@@ -19,6 +28,7 @@ export default async function CoachPage({ params }) {
   }
 
   const account = accountData.data
+  const myPuuid = account.puuid
 
   // Récupérer le rang
   const mmrRes = await fetch(
@@ -26,7 +36,6 @@ export default async function CoachPage({ params }) {
     { headers: { Authorization: apiKey } }
   )
   const mmrData = await mmrRes.json()
-  const currentTier = mmrData.data?.current_data?.currenttier || 0
   const currentTierName = mmrData.data?.current_data?.currenttierpatched || "Unranked"
 
   // Récupérer les matchs
@@ -35,8 +44,9 @@ export default async function CoachPage({ params }) {
     { headers: { Authorization: apiKey } }
   )
   const matchesData = await matchesRes.json()
+  const rawMatches = matchesData.data || []
 
-  const matches = matchesData.data?.map(match => {
+  const matches = rawMatches.map(match => {
     const me = match.players?.find(p => p.puuid === account.puuid)
     const myTeam = me?.team_id
     const won = match.teams?.find(t => t.team_id === myTeam)?.won
@@ -45,7 +55,7 @@ export default async function CoachPage({ params }) {
       result: won ? "Win" : "Loss",
       agent: me?.agent?.name || "Unknown",
     }
-  }) || []
+  })
 
   // Stats par map
   const mapStats = {}
@@ -103,41 +113,22 @@ export default async function CoachPage({ params }) {
   const problematicAgent = agentList.find(a => a.total >= 3 && a.wr <= 35)
   const problematicMap = mapList.find(m => m.total >= 3 && m.wr <= 35)
 
-  // Conseils selon le rang
-  function getRankTips(tier) {
-    if (tier >= 3 && tier <= 8) {
-      // Iron / Bronze
-      return [
-        "Concentre-toi uniquement sur ton aim — ouvre Aim Lab ou le deathmatch pendant 15 min avant chaque session",
-        "Crosshair placement à hauteur de tête, toujours — 80% des duels se jouent là",
-        "Évite de sur-réfléchir les strats, ton équipe ne les exécutera pas parfaitement de toute façon",
-      ]
-    }
-    if (tier >= 9 && tier <= 14) {
-      // Silver / Gold
-      return [
-        "Apprends à lire l'économie — save quand l'équipe est à <2500, force uniquement sur pistol followup",
-        "Utilise ton utility au début du round, pas à la fin — les infos valent plus que les frags",
-        "Stop de trade mal tes duels, attends que ton coéquipier soit en position",
-      ]
-    }
-    if (tier >= 15 && tier <= 20) {
-      // Platinum / Diamond
-      return [
-        "Apprends 2-3 lineups par map (mollos, smokes post-plant) — ça change des rounds",
-        "Map control avant contact — jouez des utilities coordonnées pour gagner du terrain sans combattre",
-        "Mid-round calls : si le premier contact échoue, ayez un plan B immédiat (rotate, fake, stack)",
-      ]
-    }
-    // Ascendant+
-    return [
-      "Timings millimétrés — chaque util doit être lancé dans la seconde optimale du round",
-      "Utility combos avancés : flash + peek synchronisés avec l'équipe, pas en solo",
-      "Lecture des tendances adverses — adapte tes exécutions après 5-6 rounds d'observation",
-    ]
-  }
+  // ========== CALCUL DES METRIQUES AVANCEES ==========
+  const firstDuel = calculateFirstDuelRate(rawMatches, myPuuid)
+  const trade = calculateTradeRate(rawMatches, myPuuid)
+  const kast = calculateKast(rawMatches, myPuuid)
+  const pistol = calculatePistolWinrate(rawMatches, myPuuid)
+  const dpr = calculateDpr(rawMatches, myPuuid)
+  const eco = calculateEcoVsFullBuy(rawMatches, myPuuid)
 
-  const rankTips = getRankTips(currentTier)
+  const personalizedTips = generatePersonalizedTips({
+    firstDuel,
+    trade,
+    kast,
+    pistol,
+    dpr,
+    eco,
+  })
 
   return (
     <div className="space-y-6">
@@ -166,7 +157,6 @@ export default async function CoachPage({ params }) {
       {(currentStreak >= 3 || problematicAgent || problematicMap) && (
         <div className="space-y-2">
 
-          {/* Streak */}
           {currentStreak >= 3 && (
             <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border-l-4 ${
               streakType === "Loss"
@@ -190,7 +180,6 @@ export default async function CoachPage({ params }) {
             </div>
           )}
 
-          {/* Agent problématique */}
           {problematicAgent && (
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl border-l-4 bg-amber-500/5 border-l-amber-500 border-y border-r border-amber-500/20">
               <span className="text-xl">⚠️</span>
@@ -199,7 +188,7 @@ export default async function CoachPage({ params }) {
                   Agent en difficulté : {problematicAgent.agent}
                 </p>
                 <p className="text-xs text-slate-400">
-                  Évite ce pick en ranked tant que tu ne l'as pas travaillé en custom
+                  Garde ce pick pour les customs tant que tu ne l'as pas travaillé
                 </p>
               </div>
               <p className="text-lg font-bold text-amber-400">
@@ -208,7 +197,6 @@ export default async function CoachPage({ params }) {
             </div>
           )}
 
-          {/* Map problématique */}
           {problematicMap && (
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl border-l-4 bg-orange-500/5 border-l-orange-500 border-y border-r border-orange-500/20">
               <span className="text-xl">⚠️</span>
@@ -217,7 +205,7 @@ export default async function CoachPage({ params }) {
                   Map défavorable : {problematicMap.map}
                 </p>
                 <p className="text-xs text-slate-400">
-                  Dodge ou joue-la en unrated pour travailler tes setups
+                  Travaille cette map en unrated pour améliorer tes setups
                 </p>
               </div>
               <p className="text-lg font-bold text-orange-400">
@@ -229,15 +217,13 @@ export default async function CoachPage({ params }) {
         </div>
       )}
 
-{/* SESSION PLAN ENRICHI */}
+      {/* SESSION PLAN ENRICHI */}
       <div className="bg-gradient-to-br from-indigo-500/10 via-slate-900 to-slate-900 border border-indigo-500/30 rounded-3xl p-6">
         <p className="text-xs text-indigo-300 uppercase tracking-wider font-semibold mb-4">🎯 Ton Session Plan</p>
 
-        {/* OBJECTIF */}
         <div className="mb-6">
           <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-2">Objectif de la session</p>
           {(() => {
-            // Calcul du RR net des derniers matchs pour définir l'objectif
             const sessionWins = matches.filter(m => m.result === "Win").length
             const sessionLosses = matches.filter(m => m.result === "Loss").length
             const netScore = sessionWins - sessionLosses
@@ -264,11 +250,9 @@ export default async function CoachPage({ params }) {
           })()}
         </div>
 
-        {/* PLAN D'ACTION */}
         <div className="space-y-3 mb-6">
           <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Ton plan d'action</p>
 
-          {/* Action 1 : Maps à privilégier */}
           <div className="flex gap-3 items-start bg-slate-800/50 border border-slate-800 rounded-2xl p-4">
             <span className="bg-emerald-500/20 text-emerald-400 text-sm font-bold w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0">1</span>
             <div className="flex-1">
@@ -283,7 +267,6 @@ export default async function CoachPage({ params }) {
             </div>
           </div>
 
-          {/* Action 2 : Pick recommandé */}
           <div className="flex gap-3 items-start bg-slate-800/50 border border-slate-800 rounded-2xl p-4">
             <span className="bg-indigo-500/20 text-indigo-400 text-sm font-bold w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0">2</span>
             <div className="flex-1">
@@ -298,7 +281,6 @@ export default async function CoachPage({ params }) {
             </div>
           </div>
 
-          {/* Action 3 : Vigilance */}
           <div className="flex gap-3 items-start bg-slate-800/50 border border-slate-800 rounded-2xl p-4">
             <span className="bg-amber-500/20 text-amber-400 text-sm font-bold w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0">3</span>
             <div className="flex-1">
@@ -316,12 +298,10 @@ export default async function CoachPage({ params }) {
           </div>
         </div>
 
-        {/* PRÉDICTION */}
         {bestMap && bestAgent && (
           <div className="bg-slate-800/50 border border-indigo-500/30 rounded-2xl p-4">
             <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-2">📊 Prédiction</p>
             {(() => {
-              // Moyenne du WR sur la meilleure map + meilleur agent
               const avgWr = Math.round((bestMap.wr + bestAgent.wr) / 2)
               return (
                 <p className="text-sm text-slate-300 leading-relaxed">
@@ -333,36 +313,51 @@ export default async function CoachPage({ params }) {
         )}
       </div>
 
-      {/* CONSEILS SELON LE RANG */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+      {/* CONSEILS PERSONNALISÉS */}
+      <div className="bg-gradient-to-br from-violet-500/10 via-slate-900 to-slate-900 border border-violet-500/30 rounded-3xl p-6">
         <div className="flex items-center gap-2 mb-4">
-          <p className="text-xs text-indigo-300 uppercase tracking-wider font-semibold">💡 Conseils pour ton rang</p>
+          <p className="text-xs text-violet-300 uppercase tracking-wider font-semibold">🎯 Conseils pour TOI</p>
           <span className="text-xs text-slate-500">· {currentTierName}</span>
         </div>
-        <div className="space-y-3">
-          {rankTips.map((tip, i) => (
-            <div key={i} className="flex gap-3 items-start">
-              <span className="text-indigo-400 font-bold mt-0.5">{i + 1}.</span>
-              <p className="text-slate-300 leading-relaxed">{tip}</p>
-            </div>
-          ))}
-        </div>
+
+        {personalizedTips.length > 0 ? (
+          <div className="space-y-3">
+            {personalizedTips.map((tip, i) => (
+              <div key={i} className="flex gap-3 items-start bg-slate-800/50 border border-slate-800 rounded-2xl p-4">
+                <span className="text-2xl flex-shrink-0">{tip.icon}</span>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-sm font-semibold text-white">{tip.title}</p>
+                    <span className="text-xs text-slate-500">{tip.stat}</span>
+                  </div>
+                  <p className="text-sm text-slate-400 leading-relaxed">{tip.advice}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-emerald-500/5 border border-emerald-500/30 rounded-2xl p-5 text-center">
+            <p className="text-2xl mb-2">🏆</p>
+            <p className="text-sm font-semibold text-emerald-400 mb-1">Aucune faiblesse critique détectée</p>
+            <p className="text-sm text-slate-400">
+              Tu es solide sur tous les fondamentaux. Concentre-toi maintenant sur l'optimisation de ton meilleur agent et pousse tes trades encore plus haut.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* CARDS BEST/WORST MAP ET AGENT */}
       <div className="grid md:grid-cols-2 gap-6">
 
-        {/* Meilleure map */}
         {bestMap && (
           <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/30 rounded-3xl p-6">
             <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-2">🗺️ Ta meilleure map</p>
             <p className="text-3xl font-bold text-white">{bestMap.map}</p>
             <p className="text-slate-400 text-sm mt-1">{bestMap.wins}W · {bestMap.losses}L · {bestMap.wr}% de winrate</p>
-            <p className="text-sm text-slate-300 mt-3">Force la queue sur cette map dès que possible.</p>
+            <p className="text-sm text-slate-300 mt-3">Privilégie cette map pendant tes sessions compétitives.</p>
           </div>
         )}
 
-        {/* Meilleur agent */}
         {bestAgent && (
           <div className="bg-gradient-to-br from-indigo-500/10 to-transparent border border-indigo-500/30 rounded-3xl p-6">
             <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-2">🎭 Ton meilleur agent</p>
