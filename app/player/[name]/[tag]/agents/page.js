@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { getAgentImage } from "@/app/agentImages"
 
 export default async function AgentsPage({ params }) {
   const { name, tag } = await params
@@ -61,6 +62,8 @@ export default async function AgentsPage({ params }) {
   const worstAgents = agentList.filter(a => a.wr < 45).sort((a, b) => a.wr - b.wr)
 
   function AgentCard({ agentData, borderColor, wrColor }) {
+    const agentImage = getAgentImage(agentData.agent) || agentData.icon
+
     return (
       <Link
         href={`/player/${name}/${tag}/agent/${agentData.agent}`}
@@ -68,11 +71,17 @@ export default async function AgentsPage({ params }) {
       >
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-3">
-            {agentData.icon && (
-              <img src={agentData.icon} className="w-10 h-10 rounded-lg" />
+            {agentImage && (
+              <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-800 flex-shrink-0">
+                <img
+                  src={agentImage}
+                  className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                  alt={agentData.agent}
+                />
+              </div>
             )}
             <div>
-              <p className="font-bold">{agentData.agent}</p>
+              <p className="font-bold text-lg">{agentData.agent}</p>
               <p className="text-xs text-slate-500 mt-0.5">
                 {agentData.wins}W · {agentData.losses}L
               </p>
