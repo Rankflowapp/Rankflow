@@ -32,16 +32,26 @@ export default function AdvancedView({ metrics }) {
             <button
               key={m.key}
               onClick={() => toggleMetric(m.key)}
-              className={`text-left p-4 rounded-2xl border transition ${
+              className={`group text-left p-4 rounded-2xl border-2 transition-all ${
                 openMetric === m.key
-                  ? "bg-slate-800 border-indigo-500/40"
-                  : "bg-slate-800/50 border-slate-800 hover:border-slate-700 hover:bg-slate-800"
+                  ? "bg-slate-800 border-indigo-500/60 shadow-lg shadow-indigo-500/10"
+                  : "bg-slate-800/50 border-slate-700/50 hover:border-indigo-500/40 hover:bg-slate-800 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5"
               }`}
             >
               <p className="text-xs text-slate-400 mb-2">{m.icon} {m.shortTitle}</p>
-              <p className={`text-2xl font-bold tracking-tight ${getColor(m.value, m.goodThreshold, m.badThreshold)}`}>
+              <p className={`text-2xl font-bold tracking-tight mb-2 ${getColor(m.value, m.goodThreshold, m.badThreshold)}`}>
                 {m.displayValue}
               </p>
+              <div className={`flex items-center gap-1 text-xs transition ${
+                openMetric === m.key
+                  ? "text-indigo-300"
+                  : "text-slate-500 group-hover:text-indigo-300"
+              }`}>
+                <span>{openMetric === m.key ? "Fermer" : "Voir détails"}</span>
+                <span className="group-hover:translate-x-0.5 transition">
+                  {openMetric === m.key ? "↑" : "→"}
+                </span>
+              </div>
             </button>
           ))}
 
