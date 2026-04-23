@@ -13,23 +13,23 @@ export default function HistoryView({ matches, totalRr }) {
   return (
     <div className="space-y-6">
 
-      {/* TOTAL RR SESSION */}
+      {/* SESSION TOTAL RR */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs text-indigo-300 uppercase tracking-wider font-semibold mb-1">Session totale</p>
-            <p className="text-sm text-slate-400">{matches.length} matchs compétitifs</p>
+            <p className="text-xs text-indigo-300 uppercase tracking-wider font-semibold mb-1">Total session</p>
+            <p className="text-sm text-slate-400">{matches.length} competitive matches</p>
           </div>
           <div className="text-right">
             <p className={`text-4xl font-bold tracking-tight ${totalRr >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
               {totalRr >= 0 ? "+" : ""}{totalRr} RR
             </p>
-            <p className="text-xs text-slate-500 mt-1">Net sur la session</p>
+            <p className="text-xs text-slate-500 mt-1">Session net</p>
           </div>
         </div>
       </div>
 
-      {/* FILTRES */}
+      {/* FILTERS */}
       <div className="flex gap-2">
         <button
           onClick={() => setFilter("all")}
@@ -39,7 +39,7 @@ export default function HistoryView({ matches, totalRr }) {
               : "text-slate-400 hover:text-white hover:bg-slate-800/50 border border-transparent"
           }`}
         >
-          Tous ({matches.length})
+          All ({matches.length})
         </button>
         <button
           onClick={() => setFilter("wins")}
@@ -49,7 +49,7 @@ export default function HistoryView({ matches, totalRr }) {
               : "text-slate-400 hover:text-white hover:bg-slate-800/50 border border-transparent"
           }`}
         >
-          Victoires ({matches.filter(m => m.result === "Win").length})
+          Wins ({matches.filter(m => m.result === "Win").length})
         </button>
         <button
           onClick={() => setFilter("losses")}
@@ -59,11 +59,11 @@ export default function HistoryView({ matches, totalRr }) {
               : "text-slate-400 hover:text-white hover:bg-slate-800/50 border border-transparent"
           }`}
         >
-          Défaites ({matches.filter(m => m.result === "Loss").length})
+          Losses ({matches.filter(m => m.result === "Loss").length})
         </button>
       </div>
 
-      {/* LISTE DES MATCHS */}
+      {/* MATCHES LIST */}
       <div className="space-y-3">
         {filteredMatches.map((match, i) => (
           <div
@@ -118,7 +118,7 @@ export default function HistoryView({ matches, totalRr }) {
 
         {filteredMatches.length === 0 && (
           <div className="text-center py-12 text-slate-500">
-            Aucun match dans cette catégorie
+            No matches in this category
           </div>
         )}
       </div>

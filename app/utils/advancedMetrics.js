@@ -1,5 +1,5 @@
-// Fonctions de calcul des métriques avancées
-// Réutilisables dans toutes les pages (Coach, Advanced, etc.)
+// Advanced metrics calculation functions
+// Reusable across all pages (Coach, Advanced, etc.)
 
 const TRADE_WINDOW_MS = 5000
 
@@ -168,7 +168,7 @@ export function calculateEcoVsFullBuy(matches, myPuuid) {
   return { ecoKpr, fullBuyKpr, ecoRounds, fullBuyRounds }
 }
 
-// ========== GÉNÉRATION DE CONSEILS PERSONNALISÉS ==========
+// ========== PERSONALIZED TIPS GENERATION ==========
 export function generatePersonalizedTips(metrics) {
   const tips = []
 
@@ -178,17 +178,17 @@ export function generatePersonalizedTips(metrics) {
       tips.push({
         icon: "⚔️",
         priority: "high",
-        title: "Améliore tes premiers duels",
-        advice: "Avant chaque session, fais 10 min de Aim Lab (mode réflexe). Travaille ton crosshair placement à hauteur de tête.",
-        stat: `${metrics.firstDuel.rate}% de first duel rate`
+        title: "Improve your first duels",
+        advice: "Before each session, spend 10 minutes in the Range. Use moving bots at medium-long range to warm up your aim, then work on crosshair placement at head height.",
+        stat: `${metrics.firstDuel.rate}% first duel rate`
       })
     } else if (metrics.firstDuel.rate < 45) {
       tips.push({
         icon: "⚔️",
         priority: "medium",
-        title: "Affine tes premiers duels",
-        advice: "Prends l'habitude de check les angles proches avant de t'engager. Évite les peeks sans info préalable.",
-        stat: `${metrics.firstDuel.rate}% de first duel rate`
+        title: "Sharpen your first duels",
+        advice: "Get in the habit of clearing close angles before engaging. Avoid peeks without prior info from your team or your utility.",
+        stat: `${metrics.firstDuel.rate}% first duel rate`
       })
     }
   }
@@ -199,17 +199,17 @@ export function generatePersonalizedTips(metrics) {
       tips.push({
         icon: "🤝",
         priority: "high",
-        title: "Rapproche-toi de ton équipe",
-        advice: "Tu meurs trop isolé. Reste dans la vision de tes coéquipiers, peek ensemble plutôt que solo.",
-        stat: `${metrics.trade.rate}% de trade rate`
+        title: "Get closer to your team",
+        advice: "You're dying too isolated. Stay within your teammates' line of sight, peek together rather than solo. Stick with your duelist as an initiator or controller.",
+        stat: `${metrics.trade.rate}% trade rate`
       })
     } else if (metrics.trade.rate < 45) {
       tips.push({
         icon: "🤝",
         priority: "medium",
-        title: "Améliore ton positionnement",
-        advice: "Pense à jouer en binôme avec un coéquipier proche. Les trades sont la base du jeu en équipe.",
-        stat: `${metrics.trade.rate}% de trade rate`
+        title: "Improve your positioning",
+        advice: "Try to play in pairs with a nearby teammate. Trades are the foundation of team play — always make sure someone can avenge your death.",
+        stat: `${metrics.trade.rate}% trade rate`
       })
     }
   }
@@ -220,9 +220,9 @@ export function generatePersonalizedTips(metrics) {
       tips.push({
         icon: "⭐",
         priority: "high",
-        title: "Augmente ton impact par round",
-        advice: "Même sans frag, apporte de l'utility ou de l'info. Ne sois jamais invisible sur un round.",
-        stat: `${metrics.kast.rate}% de KAST`
+        title: "Boost your round impact",
+        advice: "Even without a frag, contribute with utility or info. Never be invisible in a round — use your abilities early to gather info or support your team's execution.",
+        stat: `${metrics.kast.rate}% KAST`
       })
     }
   }
@@ -233,9 +233,9 @@ export function generatePersonalizedTips(metrics) {
       tips.push({
         icon: "🔫",
         priority: "high",
-        title: "Travaille tes pistols",
-        advice: "Regarde des setups de pistol sur YouTube pour tes maps principales. Coordonne avec ton équipe avant le round 1.",
-        stat: `${metrics.pistol.rate}% de pistol winrate`
+        title: "Work on your pistols",
+        advice: "Watch pistol setups on YouTube for your main maps. Communicate with your team before round 1 to plan a default strat and stack a site together.",
+        stat: `${metrics.pistol.rate}% pistol winrate`
       })
     }
   }
@@ -246,8 +246,8 @@ export function generatePersonalizedTips(metrics) {
       tips.push({
         icon: "💥",
         priority: "high",
-        title: "Implique-toi plus dans les duels",
-        advice: "Tes dégâts sont faibles. Ne sois pas passif — cherche les opportunités d'engagement ou assiste les duels de tes coéquipiers.",
+        title: "Get more involved in duels",
+        advice: "Your damage output is low. Don't play passively — look for engagement opportunities or support your teammates' duels with your fire.",
         stat: `${metrics.dpr.dpr} damage/round`
       })
     }
@@ -258,13 +258,13 @@ export function generatePersonalizedTips(metrics) {
     tips.push({
       icon: "💰",
       priority: "high",
-      title: "Rentabilise tes full buy",
-      advice: "Même avec le meilleur équipement, tes rounds buy rapportent peu. Revois tes gunfights : aim, peek timing, positionnement.",
-      stat: `${metrics.eco.fullBuyKpr} kills/round en full buy`
+      title: "Capitalize on your full buys",
+      advice: "Even with the best gear, your buy rounds don't pay off. Review your gunfights: aim precision, peek timing, positioning. Try the Range to warm up your aim before ranked.",
+      stat: `${metrics.eco.fullBuyKpr} kills/round on full buy`
     })
   }
 
-  // Trier par priorité et limiter à 4 conseils max
+  // Sort by priority and limit to 4 tips max
   const sorted = tips.sort((a, b) => (a.priority === "high" ? -1 : 1))
   return sorted.slice(0, 4)
 }

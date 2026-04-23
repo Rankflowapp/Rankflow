@@ -141,14 +141,14 @@ export default function ProTeams() {
           VCT 2026
         </h2>
         <p className="text-slate-400 text-lg">
-          Compare-toi à tes idoles de la scène pro
+          Compare yourself to your favorite pros
         </p>
       </div>
 
       {/* SÉLECTEUR DE RÉGION */}
       <div className="mb-10">
         <p className="text-center text-sm text-slate-400 mb-5 uppercase tracking-wider font-semibold">
-          Choisis ta région
+          Choose your region
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {regions.map(region => {
@@ -201,8 +201,8 @@ export default function ProTeams() {
       {!selectedRegion && (
         <div className="text-center py-12 border-2 border-dashed border-slate-800 rounded-3xl">
           <div className="text-5xl mb-3">🌍</div>
-          <p className="text-lg font-semibold text-slate-300 mb-1">Sélectionne une région pour commencer</p>
-          <p className="text-sm text-slate-500">Découvre les équipes et joueurs de la scène pro Valorant</p>
+          <p className="text-lg font-semibold text-slate-300 mb-1">Select a region to start</p>
+          <p className="text-sm text-slate-500">Discover the teams and players of the Valorant pro scene</p>
         </div>
       )}
 
@@ -215,7 +215,7 @@ export default function ProTeams() {
               <p className={`text-xs uppercase tracking-wider font-semibold ${currentRegion.textColor}`}>
                 VCT {currentRegion.name}
               </p>
-              <p className="text-lg font-bold text-white">{currentTeams.length} équipes · {currentTeams.length * 5} joueurs</p>
+              <p className="text-lg font-bold text-white">{currentTeams.length} teams · {currentTeams.length * 5} players</p>
             </div>
           </div>
 
@@ -270,18 +270,18 @@ export default function ProTeams() {
                             <button
                               onClick={(e) => openSuggestModal(player, team, e)}
                               className="text-xs text-slate-600 hover:text-amber-400 transition opacity-0 group-hover:opacity-100"
-                              title="Corriger le Riot ID"
+                              title="Correct the Riot ID"
                             >
                               ✎
                             </button>
                             <span className="text-xs text-slate-500 group-hover:text-indigo-300 transition flex items-center gap-1">
-                              <span>Voir</span>
+                              <span>View</span>
                               <span className="group-hover:translate-x-0.5 transition">→</span>
                             </span>
                           </div>
                         ) : (
                           <span className="text-xs text-slate-500 group-hover:text-indigo-300 transition">
-                            Suggérer
+                            Suggest
                           </span>
                         )}
                       </div>
@@ -293,7 +293,7 @@ export default function ProTeams() {
           </div>
 
           <p className="text-center text-xs text-slate-500 mt-8">
-            Les Riot IDs sont ajoutés au fur et à mesure grâce à la communauté
+            Riot IDs are being added over time thanks to the community
           </p>
         </>
       )}
@@ -311,17 +311,17 @@ export default function ProTeams() {
             {submitStatus === "success" ? (
               <div className="text-center py-6">
                 <div className="text-5xl mb-3">✅</div>
-                <h3 className="text-xl font-bold text-emerald-400 mb-2">Merci !</h3>
+                <h3 className="text-xl font-bold text-emerald-400 mb-2">Thanks!</h3>
                 <p className="text-sm text-slate-400">
-                  Ta suggestion a bien été envoyée. Elle sera vérifiée et ajoutée rapidement.
+                  Your suggestion has been sent. It will be verified and added quickly.
                 </p>
               </div>
             ) : (
               <>
                 <div className="mb-5">
-                  <p className="text-xs text-indigo-300 uppercase tracking-wider font-semibold mb-2">🤝 Aide la communauté</p>
+                  <p className="text-xs text-indigo-300 uppercase tracking-wider font-semibold mb-2">🤝 Help the community</p>
                   <h3 className="text-xl font-bold text-white mb-1">
-                    {modalPlayer.riotId ? `Corriger le Riot ID de ${modalPlayer.ign}` : `Riot ID de ${modalPlayer.ign}`}
+                    {modalPlayer.riotId ? `Correct ${modalPlayer.ign}'s Riot ID` : `${modalPlayer.ign}'s Riot ID`}
                   </h3>
                   <p className="text-sm text-slate-400">
                     {modalTeam.name}
@@ -331,7 +331,7 @@ export default function ProTeams() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <label className="block text-xs text-slate-400 uppercase tracking-wider font-semibold mb-2">
-                      Riot ID du joueur
+                      Player's Riot ID
                     </label>
                     <input
                       type="text"
@@ -343,20 +343,20 @@ export default function ProTeams() {
                     />
                     {modalPlayer.riotId && (
                       <p className="text-xs text-slate-500 mt-1.5">
-                        Actuellement : {modalPlayer.riotId}
+                        Currently: {modalPlayer.riotId}
                       </p>
                     )}
                   </div>
 
                   <div>
                     <label className="block text-xs text-slate-400 uppercase tracking-wider font-semibold mb-2">
-                      Source <span className="text-slate-600 normal-case">(optionnel)</span>
+                      Source <span className="text-slate-600 normal-case">(optional)</span>
                     </label>
                     <input
                       type="text"
                       value={sourceInput}
                       onChange={(e) => setSourceInput(e.target.value)}
-                      placeholder="ex: stream Twitch, annonce officielle..."
+                      placeholder="ex: Twitch stream, official announcement..."
                       className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition"
                     />
                   </div>
@@ -364,7 +364,7 @@ export default function ProTeams() {
                   {submitStatus === "error" && (
                     <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-3">
                       <p className="text-sm text-rose-400">
-                        ❌ Une erreur s'est produite. Réessaye dans un instant.
+                        ❌ An error occurred. Please try again in a moment.
                       </p>
                     </div>
                   )}
@@ -375,14 +375,14 @@ export default function ProTeams() {
                       onClick={closeModal}
                       className="flex-1 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-xl transition"
                     >
-                      Annuler
+                      Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={submitting || !riotIdInput.trim()}
                       className="flex-1 px-4 py-2.5 bg-indigo-500 hover:bg-indigo-400 disabled:bg-slate-700 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl transition"
                     >
-                      {submitting ? "Envoi..." : "Envoyer"}
+                      {submitting ? "Sending..." : "Send"}
                     </button>
                   </div>
                 </form>

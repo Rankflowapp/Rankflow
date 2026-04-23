@@ -181,56 +181,56 @@ export default async function AdvancedPage({ params }) {
   // ========== INSIGHTS ==========
   function getFirstDuelInsight(v) {
     if (v >= 60) return { text: "Excellent entry fragger", color: "text-emerald-400" }
-    if (v >= 50) return { text: "Tu tiens tes duels, continue", color: "text-emerald-400" }
-    if (v >= 40) return { text: "Ton aim est correct en first duel, mais il y a du progrès à faire", color: "text-indigo-400" }
-    if (v >= 30) return { text: "Tu perds trop de premiers duels, travaille ton crosshair placement", color: "text-amber-400" }
-    return { text: "Tu handicap ton équipe en mourant trop tôt, évite les peeks aggressifs", color: "text-rose-400" }
+    if (v >= 50) return { text: "You win your duels, keep it up", color: "text-emerald-400" }
+    if (v >= 40) return { text: "Your aim is decent in first duels, but there's room to improve", color: "text-indigo-400" }
+    if (v >= 30) return { text: "You lose too many first duels, work on your crosshair placement", color: "text-amber-400" }
+    return { text: "You handicap your team by dying too early, avoid aggressive peeks", color: "text-rose-400" }
   }
 
   function getTradeInsight(v) {
-    if (v >= 60) return { text: "Excellent, tu joues bien en équipe", color: "text-emerald-400" }
-    if (v >= 45) return { text: "Bonne coordination avec tes coéquipiers", color: "text-emerald-400" }
-    if (v >= 30) return { text: "Correct, mais tu peux mieux te positionner avec tes teammates", color: "text-indigo-400" }
-    if (v >= 20) return { text: "Tu joues souvent trop isolé, rapproche-toi de ton équipe", color: "text-amber-400" }
-    return { text: "Tu meurs souvent sans apport pour ton équipe, évite les peeks solo", color: "text-rose-400" }
+    if (v >= 60) return { text: "Excellent, you play well with your team", color: "text-emerald-400" }
+    if (v >= 45) return { text: "Good coordination with your teammates", color: "text-emerald-400" }
+    if (v >= 30) return { text: "Decent, but you could position better with your team", color: "text-indigo-400" }
+    if (v >= 20) return { text: "You often play too isolated, stay closer to your team", color: "text-amber-400" }
+    return { text: "You die without value for your team, avoid solo peeks", color: "text-rose-400" }
   }
 
   function getKastInsight(v) {
-    if (v >= 75) return { text: "Niveau pro — impact énorme sur chaque round", color: "text-emerald-400" }
-    if (v >= 65) return { text: "Excellent, tu contribues régulièrement à ton équipe", color: "text-emerald-400" }
-    if (v >= 55) return { text: "Bon KAST, continue comme ça", color: "text-indigo-400" }
-    if (v >= 45) return { text: "Moyen — tu es parfois inexistant dans les rounds", color: "text-amber-400" }
-    return { text: "Faible impact — travaille ta survie et ton positionnement", color: "text-rose-400" }
+    if (v >= 75) return { text: "Pro level — huge impact on every round", color: "text-emerald-400" }
+    if (v >= 65) return { text: "Excellent, you contribute consistently to your team", color: "text-emerald-400" }
+    if (v >= 55) return { text: "Good KAST, keep it up", color: "text-indigo-400" }
+    if (v >= 45) return { text: "Average — you're sometimes invisible in rounds", color: "text-amber-400" }
+    return { text: "Low impact — work on your survival and positioning", color: "text-rose-400" }
   }
 
   function getPistolInsight(v) {
-    if (v >= 70) return { text: "Excellent pistol — tu donnes un énorme avantage à ton équipe", color: "text-emerald-400" }
-    if (v >= 55) return { text: "Bon pistol, tu crées souvent l'avantage économique", color: "text-emerald-400" }
-    if (v >= 45) return { text: "Correct, mais les pistols méritent plus d'attention", color: "text-indigo-400" }
-    if (v >= 30) return { text: "Tu perds trop de pistols — travaille tes setups d'ouverture", color: "text-amber-400" }
-    return { text: "Catastrophique — les pistols te font perdre la moitié des manches", color: "text-rose-400" }
+    if (v >= 70) return { text: "Excellent pistol — you give your team a huge advantage", color: "text-emerald-400" }
+    if (v >= 55) return { text: "Strong pistols, you often create an economic lead", color: "text-emerald-400" }
+    if (v >= 45) return { text: "Decent, but pistols deserve more attention", color: "text-indigo-400" }
+    if (v >= 30) return { text: "You lose too many pistols — work on your opening setups", color: "text-amber-400" }
+    return { text: "Critical — pistols cost you half your rounds", color: "text-rose-400" }
   }
 
   function getDprInsight(v) {
-    if (v >= 160) return { text: "Niveau pro — tu es un vrai frag leader", color: "text-emerald-400" }
-    if (v >= 140) return { text: "Excellent damage output, tu portes ton équipe", color: "text-emerald-400" }
-    if (v >= 120) return { text: "Bon niveau de dégâts, dans la moyenne haute", color: "text-indigo-400" }
-    if (v >= 100) return { text: "Correct mais améliorable, implique-toi plus dans les duels", color: "text-amber-400" }
-    return { text: "Faible — tu ne fais pas assez de dégâts pour ton équipe", color: "text-rose-400" }
+    if (v >= 160) return { text: "Pro level — you're a real frag leader", color: "text-emerald-400" }
+    if (v >= 140) return { text: "Excellent damage output, you carry your team", color: "text-emerald-400" }
+    if (v >= 120) return { text: "Good damage level, above average", color: "text-indigo-400" }
+    if (v >= 100) return { text: "Decent but improvable, get involved in more duels", color: "text-amber-400" }
+    return { text: "Low — you don't deal enough damage for your team", color: "text-rose-400" }
   }
 
   function getEcoProfileInsight() {
     const eco = parseFloat(ecoKpr)
     const full = parseFloat(fullBuyKpr)
-    if (fullBuyRounds < 5 || ecoRounds < 5) return { text: "Pas assez de données pour analyser ton profil économique", color: "text-slate-400" }
-    if (full > eco * 2) return { text: "Profil opportuniste — tu excelles avec du budget, travaille tes clutch en eco", color: "text-indigo-400" }
-    if (eco >= full * 0.7) return { text: "Profil clutch — tu fais beaucoup avec peu, continue", color: "text-emerald-400" }
-    if (full >= 0.8 && eco >= 0.3) return { text: "Profil équilibré — tu performes dans toutes les situations", color: "text-emerald-400" }
-    if (full < 0.6) return { text: "Même en full buy tu ne frag pas assez, revois ton gunfight", color: "text-rose-400" }
-    return { text: "Profil standard, tu suis la tendance de l'économie", color: "text-indigo-400" }
+    if (fullBuyRounds < 5 || ecoRounds < 5) return { text: "Not enough data to analyze your economic profile", color: "text-slate-400" }
+    if (full > eco * 2) return { text: "Opportunist profile — you excel with money, work on your eco clutches", color: "text-indigo-400" }
+    if (eco >= full * 0.7) return { text: "Clutch profile — you do a lot with little, keep it up", color: "text-emerald-400" }
+    if (full >= 0.8 && eco >= 0.3) return { text: "Balanced profile — you perform in all situations", color: "text-emerald-400" }
+    if (full < 0.6) return { text: "Even on full buy you don't frag enough, review your gunfights", color: "text-rose-400" }
+    return { text: "Standard profile, you follow the economic trend", color: "text-indigo-400" }
   }
 
-  // ========== PRÉPARATION DES DONNÉES POUR LE COMPOSANT CLIENT ==========
+  // ========== PREPARE DATA FOR CLIENT COMPONENT ==========
   const firstDuelInsight = getFirstDuelInsight(firstKillRate)
   const tradeInsight = getTradeInsight(tradeRate)
   const kastInsight = getKastInsight(kast)
@@ -243,8 +243,8 @@ export default async function AdvancedPage({ params }) {
       key: "firstDuel",
       icon: "⚔️",
       shortTitle: "First Duel",
-      title: "Tes premiers duels",
-      description: "% de premiers kills gagnés quand tu es impliqué",
+      title: "Your first duels",
+      description: "% of first kills won when you're involved",
       value: firstKillRate,
       displayValue: `${firstKillRate}%`,
       subValue: `${firstKillsWon}W / ${firstKillsLost}L`,
@@ -276,8 +276,8 @@ export default async function AdvancedPage({ params }) {
       key: "trade",
       icon: "🤝",
       shortTitle: "Trade Rate",
-      title: "Tes morts traded",
-      description: "% de tes morts vengées par un coéquipier dans les 5s",
+      title: "Your traded deaths",
+      description: "% of your deaths avenged by a teammate within 5s",
       value: tradeRate,
       displayValue: `${tradeRate}%`,
       subValue: `${deathsTraded}/${totalDeaths} traded`,
@@ -292,11 +292,11 @@ export default async function AdvancedPage({ params }) {
         <div className="grid grid-cols-2 gap-3 mt-4">
           <div className="bg-gradient-to-b from-emerald-500/10 to-transparent border border-emerald-500/20 p-4 rounded-2xl text-center">
             <p className="text-2xl font-bold text-emerald-400 tracking-tight">{deathsTraded}</p>
-            <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Morts traded</p>
+            <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Traded deaths</p>
           </div>
           <div className="bg-gradient-to-b from-rose-500/10 to-transparent border border-rose-500/20 p-4 rounded-2xl text-center">
             <p className="text-2xl font-bold text-rose-400 tracking-tight">{totalDeaths - deathsTraded}</p>
-            <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Morts non traded</p>
+            <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Untraded deaths</p>
           </div>
         </div>
       )
@@ -305,8 +305,8 @@ export default async function AdvancedPage({ params }) {
       key: "kast",
       icon: "⭐",
       shortTitle: "KAST",
-      title: "Ton impact par round",
-      description: "% de rounds où tu contribues (Kill / Assist / Survive / Trade)",
+      title: "Your round impact",
+      description: "% of rounds where you contribute (Kill / Assist / Survive / Trade)",
       value: kast,
       displayValue: `${kast}%`,
       subValue: `${kastRounds}/${totalRounds} rounds`,
@@ -320,15 +320,15 @@ export default async function AdvancedPage({ params }) {
       extraContent: (
         <div className="grid grid-cols-3 gap-3 mt-4 text-center">
           <div className="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
-            <p className="text-xs text-slate-500 uppercase tracking-wider">Joueur moyen</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Average player</p>
             <p className="text-lg font-bold text-slate-300 mt-1">~60%</p>
           </div>
           <div className="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
-            <p className="text-xs text-slate-500 uppercase tracking-wider">Ton KAST</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Your KAST</p>
             <p className="text-lg font-bold text-indigo-400 mt-1">{kast}%</p>
           </div>
           <div className="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
-            <p className="text-xs text-slate-500 uppercase tracking-wider">Niveau pro</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Pro level</p>
             <p className="text-lg font-bold text-emerald-400 mt-1">75%+</p>
           </div>
         </div>
@@ -338,8 +338,8 @@ export default async function AdvancedPage({ params }) {
       key: "pistol",
       icon: "🔫",
       shortTitle: "Pistol Rounds",
-      title: "Ton impact sur les pistols",
-      description: "Winrate sur les rounds 1 et 13 (début de mi-temps)",
+      title: "Your pistol impact",
+      description: "Winrate on rounds 1 and 13 (start of each half)",
       value: pistolWinrate,
       displayValue: `${pistolWinrate}%`,
       subValue: `${pistolRoundsWon}W / ${pistolRoundsTotal - pistolRoundsWon}L`,
@@ -353,7 +353,7 @@ export default async function AdvancedPage({ params }) {
       extraContent: (
         <div className="mt-4 bg-indigo-500/5 border border-indigo-500/20 rounded-xl p-3">
           <p className="text-xs text-slate-400 leading-relaxed">
-            💎 Les pistol rounds déterminent l'économie des 2-3 rounds suivants. Un pistol gagné = une avalanche de rounds faciles. Un pistol perdu = eco forcée pendant 2-3 rounds.
+            💎 Pistol rounds determine the economy for the next 2-3 rounds. A pistol won = easy rounds rolling in. A pistol lost = forced eco for 2-3 rounds.
           </p>
         </div>
       )
@@ -362,11 +362,11 @@ export default async function AdvancedPage({ params }) {
       key: "dpr",
       icon: "💥",
       shortTitle: "Damage / Round",
-      title: "Tes dégâts par round",
-      description: "Moyenne de dégâts infligés par round joué",
+      title: "Your damage per round",
+      description: "Average damage dealt per round played",
       value: damagePerRound,
       displayValue: damagePerRound.toString(),
-      subValue: "DPR moyen",
+      subValue: "Avg DPR",
       goodThreshold: 140,
       badThreshold: 100,
       showBar: true,
@@ -377,15 +377,15 @@ export default async function AdvancedPage({ params }) {
       extraContent: (
         <div className="grid grid-cols-3 gap-3 mt-4 text-center">
           <div className="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
-            <p className="text-xs text-slate-500 uppercase tracking-wider">Joueur moyen</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Average player</p>
             <p className="text-lg font-bold text-slate-300 mt-1">~125</p>
           </div>
           <div className="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
-            <p className="text-xs text-slate-500 uppercase tracking-wider">Ton DPR</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Your DPR</p>
             <p className="text-lg font-bold text-indigo-400 mt-1">{damagePerRound}</p>
           </div>
           <div className="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
-            <p className="text-xs text-slate-500 uppercase tracking-wider">Niveau pro</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Pro level</p>
             <p className="text-lg font-bold text-emerald-400 mt-1">160+</p>
           </div>
         </div>
@@ -396,10 +396,10 @@ export default async function AdvancedPage({ params }) {
       icon: "💰",
       shortTitle: "Eco vs Full",
       title: "Eco vs Full buy",
-      description: "Ta performance selon le budget de ton équipe",
+      description: "Your performance based on your team's economy",
       value: parseFloat(fullBuyKpr) * 50,
       displayValue: `${ecoKpr} / ${fullBuyKpr}`,
-      subValue: "Kills par round",
+      subValue: "Kills per round",
       goodThreshold: 100,
       badThreshold: 30,
       showBar: false,
@@ -412,18 +412,18 @@ export default async function AdvancedPage({ params }) {
               <p className="text-amber-400 text-xs font-semibold uppercase tracking-wider mb-3">🪙 Eco rounds</p>
               <p className="text-3xl font-bold text-white tracking-tight">{ecoKpr}</p>
               <p className="text-xs text-slate-400 mt-1">Kills / round</p>
-              <p className="text-xs text-slate-500 mt-3">{ecoRounds} rounds joués</p>
+              <p className="text-xs text-slate-500 mt-3">{ecoRounds} rounds played</p>
             </div>
             <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/30 rounded-2xl p-5">
               <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-3">💎 Full buy</p>
               <p className="text-3xl font-bold text-white tracking-tight">{fullBuyKpr}</p>
               <p className="text-xs text-slate-400 mt-1">Kills / round</p>
-              <p className="text-xs text-slate-500 mt-3">{fullBuyRounds} rounds joués</p>
+              <p className="text-xs text-slate-500 mt-3">{fullBuyRounds} rounds played</p>
             </div>
           </div>
           <div className="mt-4 bg-indigo-500/5 border border-indigo-500/20 rounded-xl p-3">
             <p className="text-xs text-slate-400 leading-relaxed">
-              💎 Eco = moins de 2000 d'équipement (pistolet seul). Full buy = plus de 3500 (fusil + armure).
+              💎 Eco = less than 2000 in equipment (pistol only). Full buy = more than 3500 (rifle + armor).
             </p>
           </div>
         </>
@@ -434,27 +434,27 @@ export default async function AdvancedPage({ params }) {
   return (
     <div className="space-y-6">
 
-      {/* EN-TÊTE */}
+      {/* HEADER */}
       <div>
         <Link href={`/player/${name}/${tag}`} className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-300 transition group">
           <span className="group-hover:-translate-x-0.5 transition">←</span>
-          <span>Retour au dashboard</span>
+          <span>Back to dashboard</span>
         </Link>
-        <h1 className="text-3xl font-bold mt-2">Stats avancées de {account.name}</h1>
-        <p className="text-slate-400 text-sm">Analyse détaillée basée sur tes {matches.length} derniers matchs</p>
+        <h1 className="text-3xl font-bold mt-2">{account.name}'s Advanced Stats</h1>
+        <p className="text-slate-400 text-sm">Detailed analysis based on your last {matches.length} games</p>
       </div>
 
-      {/* SOUS-NAVIGATION */}
+      {/* SUB-NAVIGATION */}
       <div className="flex gap-2 border-b border-slate-800 pb-3 overflow-x-auto">
         <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Dashboard</a>
         <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Coach</a>
         <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Maps</a>
         <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Agents</a>
-        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm whitespace-nowrap">Stats avancées</a>
-        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Historique</a>
+        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm whitespace-nowrap">Advanced Stats</a>
+        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">History</a>
       </div>
 
-      {/* COMPOSANT CLIENT QUI GÈRE L'AFFICHAGE */}
+      {/* CLIENT COMPONENT FOR DISPLAY */}
       <AdvancedView metrics={metrics} />
 
     </div>

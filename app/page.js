@@ -33,9 +33,9 @@ export default function HomePage() {
         </p>
 
         <p className="text-slate-400 text-lg leading-relaxed">
-          Analyse tes performances, identifie tes meilleures maps, reçois des conseils personnalisés.
+          Analyze your performance, identify your best maps, get personalized coaching advice.
           <br />
-          <span className="text-slate-300">Rankflow, c'est ton coach avant chaque session.</span>
+          <span className="text-slate-300">Rankflow is your coach before every session.</span>
         </p>
       </div>
 
@@ -44,7 +44,7 @@ export default function HomePage() {
         <div className="flex gap-3">
           <input
             type="text"
-            placeholder="Sparni#EUW"
+            placeholder="Riot#ID"
             value={riotId}
             onChange={(e) => setRiotId(e.target.value)}
             className="flex-1 bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#FF4654]/50 focus:ring-2 focus:ring-[#FF4654]/20 transition"
@@ -57,7 +57,7 @@ export default function HomePage() {
           </button>
         </div>
         <p className="text-xs text-slate-500 text-center mt-3">
-          Entre ton Riot ID au format Nom#TAG
+          Enter your Riot ID in the Name#TAG format
         </p>
       </form>
 
@@ -66,17 +66,17 @@ export default function HomePage() {
         <div className="text-center">
           <div className="text-2xl mb-2">📊</div>
           <p className="text-sm font-semibold text-slate-200">Dashboard</p>
-          <p className="text-xs text-slate-500 mt-1">Vue d'ensemble</p>
+          <p className="text-xs text-slate-500 mt-1">Overview</p>
         </div>
         <div className="text-center">
           <div className="text-2xl mb-2">🎯</div>
           <p className="text-sm font-semibold text-slate-200">Coach</p>
-          <p className="text-xs text-slate-500 mt-1">Conseils adaptés</p>
+          <p className="text-xs text-slate-500 mt-1">Tailored advice</p>
         </div>
         <div className="text-center">
           <div className="text-2xl mb-2">📈</div>
           <p className="text-sm font-semibold text-slate-200">Progression</p>
-          <p className="text-xs text-slate-500 mt-1">Suivi du rang</p>
+          <p className="text-xs text-slate-500 mt-1">Rank tracking</p>
         </div>
       </div>
 

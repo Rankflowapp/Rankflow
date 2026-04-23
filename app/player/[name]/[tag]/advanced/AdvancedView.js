@@ -23,9 +23,9 @@ export default function AdvancedView({ metrics }) {
   return (
     <div className="space-y-6">
 
-      {/* VUE D'ENSEMBLE COMPACTE */}
+      {/* COMPACT OVERVIEW */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
-        <p className="text-xs text-indigo-300 uppercase tracking-wider font-semibold mb-4">📊 Vue d'ensemble</p>
+        <p className="text-xs text-indigo-300 uppercase tracking-wider font-semibold mb-4">📊 Overview</p>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
 
           {metrics.map(m => (
@@ -47,7 +47,7 @@ export default function AdvancedView({ metrics }) {
                   ? "text-indigo-300"
                   : "text-slate-500 group-hover:text-indigo-300"
               }`}>
-                <span>{openMetric === m.key ? "Fermer" : "Voir détails"}</span>
+                <span>{openMetric === m.key ? "Close" : "View details"}</span>
                 <span className="group-hover:translate-x-0.5 transition">
                   {openMetric === m.key ? "↑" : "→"}
                 </span>
@@ -57,11 +57,11 @@ export default function AdvancedView({ metrics }) {
 
         </div>
         <p className="text-xs text-slate-500 mt-4 text-center">
-          Clique sur une métrique pour voir le détail
+          Click a metric to view its details
         </p>
       </div>
 
-      {/* DÉTAIL DE LA MÉTRIQUE SÉLECTIONNÉE */}
+      {/* SELECTED METRIC DETAIL */}
       {openMetric && (() => {
         const m = metrics.find(x => x.key === openMetric)
         if (!m) return null
@@ -82,7 +82,7 @@ export default function AdvancedView({ metrics }) {
               </div>
             </div>
 
-            {/* Barre de progression */}
+            {/* Progress bar */}
             {m.showBar && (
               <>
                 <div className="relative h-2 bg-slate-800 rounded-full overflow-hidden mb-4">
@@ -99,13 +99,13 @@ export default function AdvancedView({ metrics }) {
               </>
             )}
 
-            {/* Insight coach */}
+            {/* Coach insight */}
             <div className="bg-slate-800/50 border border-slate-800 rounded-2xl p-4">
               <p className="text-xs text-slate-400 mb-1 uppercase tracking-wider font-semibold">💡 Coach insight</p>
               <p className={`text-sm font-medium ${m.insightColor}`}>{m.insight}</p>
             </div>
 
-            {/* Contenu spécifique (détail, benchmark, etc.) */}
+            {/* Extra content (detail, benchmark, etc.) */}
             {m.extraContent}
           </div>
         )

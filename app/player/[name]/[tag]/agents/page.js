@@ -95,7 +95,7 @@ export default async function AgentsPage({ params }) {
           </p>
         </div>
         <div className="flex items-center gap-1 text-xs text-slate-500 group-hover:text-indigo-400 transition">
-          <span>Voir détails</span>
+          <span>View détails</span>
           <span className="group-hover:translate-x-0.5 transition">→</span>
         </div>
       </Link>
@@ -109,10 +109,10 @@ export default async function AgentsPage({ params }) {
       <div>
         <Link href={`/player/${name}/${tag}`} className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-300 transition group">
           <span className="group-hover:-translate-x-0.5 transition">←</span>
-          <span>Retour au dashboard</span>
+          <span>Back to dashboard</span>
         </Link>
-        <h1 className="text-3xl font-bold mt-2">Agents de {account.name}</h1>
-        <p className="text-slate-400 text-sm">Tes stats sur les {matches.length} derniers matchs</p>
+        <h1 className="text-3xl font-bold mt-2">{account.name}'s Agents</h1>
+        <p className="text-slate-400 text-sm">Your stats over the last {matches.length} games</p>
       </div>
 
       {/* SOUS-NAVIGATION */}
@@ -121,14 +121,14 @@ export default async function AgentsPage({ params }) {
         <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Coach</a>
         <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Maps</a>
         <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm whitespace-nowrap">Agents</a>
-        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Stats avancées</a>
-        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Historique</a>
+        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Advanced Stats</a>
+        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">History</a>
       </div>
 
       {/* 3 COLONNES */}
       {agentList.length === 0 ? (
         <div className="text-center py-12 text-slate-500">
-          Aucun match trouvé
+          No matches found
         </div>
       ) : (
         <div className="grid md:grid-cols-3 gap-5">
@@ -138,8 +138,8 @@ export default async function AgentsPage({ params }) {
             <div className="flex items-center gap-3 mb-4">
               <span className="text-3xl">🔥</span>
               <div>
-                <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider">À privilégier</p>
-                <p className="text-base text-white font-semibold">Meilleurs agents</p>
+                <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider">To prioritize</p>
+                <p className="text-base text-white font-semibold">Best agents</p>
               </div>
             </div>
 
@@ -155,7 +155,7 @@ export default async function AgentsPage({ params }) {
                 ))
               ) : (
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
-                  <p className="text-sm text-slate-500">Aucun agent avec &gt;55% de WR</p>
+                  <p className="text-sm text-slate-500">No agent with &gt;55% WR</p>
                 </div>
               )}
             </div>
@@ -166,8 +166,8 @@ export default async function AgentsPage({ params }) {
             <div className="flex items-center gap-3 mb-4">
               <span className="text-3xl">⚖️</span>
               <div>
-                <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wider">À consolider</p>
-                <p className="text-base text-white font-semibold">Agents maîtrisés</p>
+                <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wider">To solidify</p>
+                <p className="text-base text-white font-semibold">Mastered agents</p>
               </div>
             </div>
 
@@ -183,7 +183,7 @@ export default async function AgentsPage({ params }) {
                 ))
               ) : (
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
-                  <p className="text-sm text-slate-500">Aucun agent entre 45% et 55%</p>
+                  <p className="text-sm text-slate-500">No agent between 45% and 55%</p>
                 </div>
               )}
             </div>
@@ -194,8 +194,8 @@ export default async function AgentsPage({ params }) {
             <div className="flex items-center gap-3 mb-4">
               <span className="text-3xl">⚠️</span>
               <div>
-                <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider">À éviter</p>
-                <p className="text-base text-white font-semibold">Pires agents</p>
+                <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider">To avoid</p>
+                <p className="text-base text-white font-semibold">Worst agents</p>
               </div>
             </div>
 
@@ -211,7 +211,7 @@ export default async function AgentsPage({ params }) {
                 ))
               ) : (
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
-                  <p className="text-sm text-slate-500">Aucun agent avec &lt;45% de WR</p>
+                  <p className="text-sm text-slate-500">No agent with &lt;45% WR</p>
                 </div>
               )}
             </div>

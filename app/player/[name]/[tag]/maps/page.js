@@ -94,7 +94,7 @@ export default async function MapsPage({ params }) {
             </p>
           </div>
           <div className="flex items-center gap-1 text-xs text-slate-400 group-hover:text-indigo-300 transition">
-            <span>Voir détails</span>
+            <span>View détails</span>
             <span className="group-hover:translate-x-0.5 transition">→</span>
           </div>
         </div>
@@ -109,10 +109,10 @@ export default async function MapsPage({ params }) {
       <div>
         <Link href={`/player/${name}/${tag}`} className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-300 transition group">
           <span className="group-hover:-translate-x-0.5 transition">←</span>
-          <span>Retour au dashboard</span>
+          <span>Back to dashboard</span>
         </Link>
-        <h1 className="text-3xl font-bold mt-2">Maps de {account.name}</h1>
-        <p className="text-slate-400 text-sm">Tes stats sur les {matches.length} derniers matchs</p>
+        <h1 className="text-3xl font-bold mt-2">{account.name}'s Maps</h1>
+        <p className="text-slate-400 text-sm">Your stats over the last {matches.length} games</p>
       </div>
 
       {/* SOUS-NAVIGATION */}
@@ -121,14 +121,14 @@ export default async function MapsPage({ params }) {
         <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Coach</a>
         <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm whitespace-nowrap">Maps</a>
         <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Agents</a>
-        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Stats avancées</a>
-        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Historique</a>
+        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Advanced stats</a>
+        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">History</a>
       </div>
 
       {/* 3 COLONNES */}
       {mapList.length === 0 ? (
         <div className="text-center py-12 text-slate-500">
-          Aucun match trouvé
+          No matches found
         </div>
       ) : (
         <div className="grid md:grid-cols-3 gap-5">
@@ -138,8 +138,8 @@ export default async function MapsPage({ params }) {
             <div className="flex items-center gap-3 mb-4">
               <span className="text-3xl">🔥</span>
               <div>
-                <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider">À privilégier</p>
-                <p className="text-base text-white font-semibold">Meilleures maps</p>
+                <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider">To prioritize</p>
+                <p className="text-base text-white font-semibold">Best maps</p>
               </div>
             </div>
 
@@ -155,7 +155,7 @@ export default async function MapsPage({ params }) {
                 ))
               ) : (
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
-                  <p className="text-sm text-slate-500">Aucune map avec &gt;55% de WR</p>
+                  <p className="text-sm text-slate-500">No map with &gt;55% de WR</p>
                 </div>
               )}
             </div>
@@ -166,8 +166,8 @@ export default async function MapsPage({ params }) {
             <div className="flex items-center gap-3 mb-4">
               <span className="text-3xl">⚖️</span>
               <div>
-                <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wider">À consolider</p>
-                <p className="text-base text-white font-semibold">Maps maîtrisées</p>
+                <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wider">To solidify</p>
+                <p className="text-base text-white font-semibold">Mastered maps</p>
               </div>
             </div>
 
@@ -183,7 +183,7 @@ export default async function MapsPage({ params }) {
                 ))
               ) : (
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
-                  <p className="text-sm text-slate-500">Aucune map entre 45% et 55%</p>
+                  <p className="text-sm text-slate-500">No map between 45% and 55%</p>
                 </div>
               )}
             </div>
@@ -194,8 +194,8 @@ export default async function MapsPage({ params }) {
             <div className="flex items-center gap-3 mb-4">
               <span className="text-3xl">⚠️</span>
               <div>
-                <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider">À éviter</p>
-                <p className="text-base text-white font-semibold">Pires maps</p>
+                <p className="text-rose-400 text-xs font-semibold uppercase tracking-wider">To avoid</p>
+                <p className="text-base text-white font-semibold">Worst maps</p>
               </div>
             </div>
 
@@ -211,7 +211,7 @@ export default async function MapsPage({ params }) {
                 ))
               ) : (
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center">
-                  <p className="text-sm text-slate-500">Aucune map avec &lt;45% de WR</p>
+                  <p className="text-sm text-slate-500">No map with &lt;45% and WR</p>
                 </div>
               )}
             </div>

@@ -28,7 +28,7 @@ export default async function MapDetailPage({ params }) {
   )
   const matchesData = await matchesRes.json()
 
-  // Filtrer uniquement les matchs sur cette map
+  // Filter only matches on this map
   const matches = matchesData.data?.map(match => {
     const me = match.players?.find(p => p.puuid === account.puuid)
     const myTeam = me?.team_id
@@ -51,7 +51,7 @@ export default async function MapDetailPage({ params }) {
   const losses = matches.filter(m => m.result === "Loss").length
   const winrate = matches.length > 0 ? Math.round((wins / matches.length) * 100) : 0
 
-  // Stats par agent sur cette map
+  // Stats per agent on this map
   const agentStats = {}
   matches.forEach(match => {
     if (!agentStats[match.agent]) agentStats[match.agent] = { wins: 0, total: 0, icon: match.agentIcon }
@@ -78,23 +78,23 @@ export default async function MapDetailPage({ params }) {
   return (
     <div className="space-y-6">
 
-      {/* EN-TÊTE */}
+      {/* HEADER */}
       <div>
-        <Link href={`/player/${name}/${tag}`} className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-300 transition group">
+        <Link href={`/player/${name}/${tag}/maps`} className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-300 transition group">
           <span className="group-hover:-translate-x-0.5 transition">←</span>
-          <span>Retour aux maps</span>
+          <span>Back to maps</span>
         </Link>
         <h1 className="text-4xl font-bold mt-2">{decodedMapName}</h1>
-        <p className="text-slate-400 text-sm">{matches.length} matchs analysés</p>
+        <p className="text-slate-400 text-sm">{matches.length} games analyzed</p>
       </div>
 
       {matches.length === 0 ? (
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center">
-          <p className="text-slate-400">Aucun match trouvé sur cette map dans tes 20 derniers matchs.</p>
+          <p className="text-slate-400">No matches found on this map in your last 20 games.</p>
         </div>
       ) : (
         <>
-          {/* STATS GLOBALES */}
+          {/* GLOBAL STATS */}
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-gradient-to-b from-emerald-500/10 to-transparent border border-emerald-500/20 p-5 rounded-2xl text-center">
               <p className="text-3xl font-bold text-emerald-400 tracking-tight">{wins}</p>
@@ -110,10 +110,10 @@ export default async function MapDetailPage({ params }) {
             </div>
           </div>
 
-          {/* AGENTS JOUÉS SUR CETTE MAP */}
+          {/* AGENTS PLAYED ON THIS MAP */}
           {agentList.length > 0 && (
             <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
-              <p className="text-sm text-indigo-300 mb-4">🎯 Agents joués sur {decodedMapName}</p>
+              <p className="text-sm text-indigo-300 mb-4">🎯 Agents played on {decodedMapName}</p>
               <div className="space-y-3">
                 {agentList.map((agent) => (
                   <div key={agent.agent} className="flex items-center justify-between p-3 bg-slate-800/50 rounded-xl border border-slate-800">
@@ -133,9 +133,9 @@ export default async function MapDetailPage({ params }) {
             </div>
           )}
 
-          {/* DERNIERS MATCHS SUR CETTE MAP */}
+          {/* RECENT MATCHES ON THIS MAP */}
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
-            <p className="text-sm text-indigo-300 mb-4">📜 Derniers matchs sur {decodedMapName}</p>
+            <p className="text-sm text-indigo-300 mb-4">📜 Recent matches on {decodedMapName}</p>
             <div className="space-y-3">
               {matches.map((match, i) => (
                 <div

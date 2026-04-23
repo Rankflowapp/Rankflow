@@ -64,7 +64,7 @@ export default async function PlayerPage({ params }) {
   return (
     <div className="space-y-8">
 
-      {/* JOUEUR */}
+      {/* PLAYER */}
       <div className="flex items-center gap-6">
         <img
           src={account.card.small}
@@ -72,11 +72,11 @@ export default async function PlayerPage({ params }) {
         />
         <div>
           <h1 className="text-4xl font-bold">{account.name}</h1>
-          <p className="text-slate-400">#{account.tag} · Niveau {account.account_level}</p>
+          <p className="text-slate-400">#{account.tag} · Level {account.account_level}</p>
         </div>
       </div>
 
-      {/* SOUS-NAVIGATION */}
+      {/* SUB-NAVIGATION */}
       <div className="flex gap-2 border-b border-slate-800 pb-3">
         <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm">
           Dashboard
@@ -91,17 +91,17 @@ export default async function PlayerPage({ params }) {
           Agents
         </a>
         <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">
-          Stats avancées
+          Advanced Stats
         </a>
         <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition">
-          Historique
+          History
         </a>
       </div>
 
-      {/* RANG */}
+      {/* RANK */}
       {mmr && (
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 card-hover">
-          <p className="text-slate-400 text-sm mb-3">Rang actuel</p>
+          <p className="text-slate-400 text-sm mb-3">Current rank</p>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <img src={mmr.images.large} className="w-16 h-16" />
@@ -119,13 +119,13 @@ export default async function PlayerPage({ params }) {
         </div>
       )}
 
-      {/* COURBE DE PROGRESSION */}
+      {/* PROGRESSION CURVE */}
       {history.length > 1 && (
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 card-hover">
           <div className="flex items-center justify-between mb-6">
             <div>
               <p className="text-slate-400 text-sm">Progression</p>
-              <p className="text-xs text-slate-500 mt-1">{history.length} derniers matchs</p>
+              <p className="text-xs text-slate-500 mt-1">Last {history.length} games</p>
             </div>
             <div className="flex gap-3 text-xs">
               <span className="flex items-center gap-1.5">
@@ -258,8 +258,8 @@ export default async function PlayerPage({ params }) {
           })()}
 
           <div className="flex justify-between mt-2 text-xs text-slate-500 pl-16 pr-2">
-            <span>Plus ancien</span>
-            <span>Plus récent</span>
+            <span>Oldest</span>
+            <span>Latest</span>
           </div>
         </div>
       )}
@@ -269,7 +269,7 @@ export default async function PlayerPage({ params }) {
         <div className="flex items-center justify-between mb-4">
           <p className="text-slate-400">Session Recap</p>
           <a href={`/player/${name}/${tag}/coach`} className="inline-flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 transition group">
-            <span>Voir les conseils</span>
+            <span>See coaching advice</span>
             <span className="group-hover:translate-x-0.5 transition">→</span>
           </a>
         </div>

@@ -28,7 +28,7 @@ export default async function AgentDetailPage({ params }) {
   )
   const matchesData = await matchesRes.json()
 
-  // Filtrer uniquement les matchs avec cet agent
+  // Filter only matches with this agent
   const matches = matchesData.data?.map(match => {
     const me = match.players?.find(p => p.puuid === account.puuid)
     const myTeam = me?.team_id
@@ -52,7 +52,7 @@ export default async function AgentDetailPage({ params }) {
   const losses = matches.filter(m => m.result === "Loss").length
   const winrate = matches.length > 0 ? Math.round((wins / matches.length) * 100) : 0
 
-  // Stats KDA moyennes
+  // Average KDA
   const totalKills = matches.reduce((sum, m) => sum + m.kills, 0)
   const totalDeaths = matches.reduce((sum, m) => sum + m.deaths, 0)
   const totalAssists = matches.reduce((sum, m) => sum + m.assists, 0)
@@ -60,7 +60,7 @@ export default async function AgentDetailPage({ params }) {
   const avgDeaths = matches.length > 0 ? (totalDeaths / matches.length).toFixed(1) : 0
   const avgAssists = matches.length > 0 ? (totalAssists / matches.length).toFixed(1) : 0
 
-  // Stats par map avec cet agent
+  // Stats per map with this agent
   const mapStats = {}
   matches.forEach(match => {
     if (!mapStats[match.map]) mapStats[match.map] = { wins: 0, total: 0 }
@@ -88,11 +88,11 @@ export default async function AgentDetailPage({ params }) {
   return (
     <div className="space-y-6">
 
-      {/* EN-TÊTE */}
+      {/* HEADER */}
       <div>
-        <Link href={`/player/${name}/${tag}`} className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-300 transition group">
+        <Link href={`/player/${name}/${tag}/agents`} className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-300 transition group">
           <span className="group-hover:-translate-x-0.5 transition">←</span>
-          <span>Retour aux agents</span>
+          <span>Back to agents</span>
         </Link>
         <div className="flex items-center gap-4 mt-3">
           {agentIcon && (
@@ -100,18 +100,18 @@ export default async function AgentDetailPage({ params }) {
           )}
           <div>
             <h1 className="text-4xl font-bold">{decodedAgentName}</h1>
-            <p className="text-slate-400 text-sm">{matches.length} matchs analysés</p>
+            <p className="text-slate-400 text-sm">{matches.length} games analyzed</p>
           </div>
         </div>
       </div>
 
       {matches.length === 0 ? (
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center">
-          <p className="text-slate-400">Aucun match trouvé avec cet agent dans tes 20 derniers matchs.</p>
+          <p className="text-slate-400">No matches found with this agent in your last 20 games.</p>
         </div>
       ) : (
         <>
-          {/* STATS GLOBALES */}
+          {/* GLOBAL STATS */}
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-gradient-to-b from-emerald-500/10 to-transparent border border-emerald-500/20 p-5 rounded-2xl text-center">
               <p className="text-3xl font-bold text-emerald-400 tracking-tight">{wins}</p>
@@ -127,29 +127,29 @@ export default async function AgentDetailPage({ params }) {
             </div>
           </div>
 
-          {/* KDA MOYEN */}
+          {/* AVERAGE KDA */}
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
-            <p className="text-sm text-indigo-300 mb-4">📊 KDA moyen sur {decodedAgentName}</p>
+            <p className="text-sm text-indigo-300 mb-4">📊 Average KDA on {decodedAgentName}</p>
             <div className="grid grid-cols-3 gap-3">
               <div className="bg-gradient-to-b from-emerald-500/10 to-transparent border border-emerald-500/20 p-4 rounded-2xl text-center">
                 <p className="text-2xl font-bold text-emerald-400 tracking-tight">{avgKills}</p>
-                <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Kills / match</p>
+                <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Kills / game</p>
               </div>
               <div className="bg-gradient-to-b from-rose-500/10 to-transparent border border-rose-500/20 p-4 rounded-2xl text-center">
                 <p className="text-2xl font-bold text-rose-400 tracking-tight">{avgDeaths}</p>
-                <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Deaths / match</p>
+                <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Deaths / game</p>
               </div>
               <div className="bg-gradient-to-b from-indigo-500/10 to-transparent border border-indigo-500/20 p-4 rounded-2xl text-center">
                 <p className="text-2xl font-bold text-indigo-400 tracking-tight">{avgAssists}</p>
-                <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Assists / match</p>
+                <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Assists / game</p>
               </div>
             </div>
           </div>
 
-          {/* MAPS JOUÉES AVEC CET AGENT */}
+          {/* MAPS PLAYED WITH THIS AGENT */}
           {mapList.length > 0 && (
             <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
-              <p className="text-sm text-indigo-300 mb-4">🗺️ Maps jouées avec {decodedAgentName}</p>
+              <p className="text-sm text-indigo-300 mb-4">🗺️ Maps played with {decodedAgentName}</p>
               <div className="space-y-3">
                 {mapList.map((map) => (
                   <div key={map.map} className="flex items-center justify-between p-3 bg-slate-800/50 rounded-xl border border-slate-800">
@@ -164,9 +164,9 @@ export default async function AgentDetailPage({ params }) {
             </div>
           )}
 
-          {/* DERNIERS MATCHS AVEC CET AGENT */}
+          {/* RECENT MATCHES WITH THIS AGENT */}
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
-            <p className="text-sm text-indigo-300 mb-4">📜 Derniers matchs avec {decodedAgentName}</p>
+            <p className="text-sm text-indigo-300 mb-4">📜 Recent matches with {decodedAgentName}</p>
             <div className="space-y-3">
               {matches.map((match, i) => (
                 <div
