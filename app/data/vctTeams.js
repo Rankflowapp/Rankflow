@@ -10,10 +10,10 @@ export const vctTeams = {
       logo: "/teams/bbl.png",
       players: [
         { ign: "Rosé", riotId: null },
-        { ign: "Crewen", riotId: null },
-        { ign: "Loita", riotId: null },
-        { ign: "Lar0k", riotId: null },
-        { ign: "lovers rock", riotId: null },
+        { ign: "Crewen", riotId: "BBL Crewen#bait" },
+        { ign: "Loita", riotId: "BBL Loita#tolo" },
+        { ign: "Lar0k", riotId: "BBL Lar0k#NNN" },
+        { ign: "lovers rock", riotId: "BBL lovers rock#sel" },
       ]
     },
     {
@@ -21,7 +21,7 @@ export const vctTeams = {
       country: "Europe",
       logo: "/teams/fnatic.png",
       players: [
-        { ign: "crashies", riotId: null },
+        { ign: "crashies", riotId: "FNATIC crashies#999" },
         { ign: "Boaster", riotId: null },
         { ign: "kaajak", riotId: null },
         { ign: "Alfajer", riotId: null },
@@ -37,7 +37,7 @@ export const vctTeams = {
         { ign: "Derke", riotId: null },
         { ign: "PROFEK", riotId: null },
         { ign: "Jamppi", riotId: null },
-        { ign: "Sayonara", riotId: null },
+        { ign: "Sayonara", riotId: "VIT Sayonara#gud" },
       ]
     },
     {
@@ -46,10 +46,10 @@ export const vctTeams = {
       logo: "/teams/giantx.png",
       players: [
         { ign: "Cloud", riotId: null },
-        { ign: "grubinho", riotId: null },
-        { ign: "Flickless", riotId: null },
-        { ign: "ara", riotId: null },
-        { ign: "westside", riotId: null },
+        { ign: "grubinho", riotId: "GX grubinho#777" },
+        { ign: "Flickless", riotId: "GX Flickless#0001" },
+        { ign: "ara", riotId: "GX ara#nvm" },
+        { ign: "westside", riotId: "GW westside#uwu" },
       ]
     },
     {
@@ -61,7 +61,7 @@ export const vctTeams = {
         { ign: "GLYPH", riotId: null },
         { ign: "marteen", riotId: null },
         { ign: "bipo", riotId: null },
-        { ign: "Minny", riotId: null },
+        { ign: "Minny", riotId: "M8 Minny#M8M8" },
       ]
     },
     {
@@ -70,10 +70,10 @@ export const vctTeams = {
       logo: "/teams/heretics.png",
       players: [
         { ign: "Boo", riotId: null },
-        { ign: "RieNs", riotId: null },
-        { ign: "Wo0t", riotId: null },
-        { ign: "koshmaras", riotId: null },
-        { ign: "benjyfishy", riotId: null },
+        { ign: "RieNs", riotId: "TH RieNs#TURK" },
+        { ign: "Wo0t", riotId: "TH Wo0t#Limon" },
+        { ign: "koshmaras", riotId: "TH koshmaras#006" },
+        { ign: "benjyfishy", riotId: "TH benjyfishy#111" },
       ]
     },
     {
@@ -81,11 +81,11 @@ export const vctTeams = {
       country: "Turquie",
       logo: "/teams/fut.png",
       players: [
-        { ign: "sociablEE", riotId: null },
-        { ign: "yetujey", riotId: null },
+        { ign: "sociablEE", riotId: "FUT sociablEE#k4t1l" },
+        { ign: "yetujey", riotId: "FUT yetujey#star" },
         { ign: "xeus", riotId: null },
         { ign: "KROSTALY", riotId: null },
-        { ign: "s0pp", riotId: null },
+        { ign: "s0pp", riotId: "FUT s0pp#00001" },
       ]
     },
     {
@@ -93,10 +93,10 @@ export const vctTeams = {
       country: "Europe",
       logo: "/teams/navi.png",
       players: [
-        { ign: "Filu", riotId: null },
+        { ign: "Filu", riotId: "Filu#KING" },
         { ign: "chloric", riotId: null },
-        { ign: "Ruxic", riotId: null },
-        { ign: "hiro", riotId: null },
+        { ign: "Ruxic", riotId: "Ruxic#AIM" },
+        { ign: "hiro", riotId: "hiro#luna" },
         { ign: "Kolosha", riotId: null },
       ]
     },
@@ -105,9 +105,9 @@ export const vctTeams = {
       country: "Europe",
       logo: "/teams/kcorp.png",
       players: [
-        { ign: "SUYGETSU", riotId: null },
+        { ign: "SUYGETSU", riotId: "KC suygetsu#des3r" },
         { ign: "Avez", riotId: null },
-        { ign: "dos9", riotId: null },
+        { ign: "dos9", riotId: "kc dos9#aru" },
         { ign: "LewN", riotId: null },
         { ign: "N4RRATE", riotId: null },
       ]
@@ -117,11 +117,11 @@ export const vctTeams = {
       country: "Europe",
       logo: "/teams/liquid.png",
       players: [
-        { ign: "nAts", riotId: null },
-        { ign: "purp0", riotId: null },
+        { ign: "nAts", riotId: "Liquid nAts#TATAR" },
+        { ign: "purp0", riotId: "Liquid purp0#yane0" },
         { ign: "kamo", riotId: null },
         { ign: "MiniBoo", riotId: null },
-        { ign: "wayne", riotId: null },
+        { ign: "wayne", riotId: "Liquid WAYNE#1410" },
       ]
     },
     {
@@ -145,7 +145,7 @@ export const vctTeams = {
         { ign: "al0rante", riotId: null },
         { ign: "qpert", riotId: null },
         { ign: "seven", riotId: null },
-        { ign: "NINJA", riotId: null },
+        { ign: "NINJA", riotId: "PCF NINJA#LOW9" },
       ]
     },
   ],
