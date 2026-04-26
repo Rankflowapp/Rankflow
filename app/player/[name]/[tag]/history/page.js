@@ -21,14 +21,14 @@ export default async function HistoryPage({ params }) {
 
   const account = accountData.data
 
-  // Récupérer les matchs
+  // Get matches
   const matchesRes = await fetch(
     `https://api.henrikdev.xyz/valorant/v4/matches/eu/pc/${name}/${tag}?mode=competitive&size=20`,
     { headers: { Authorization: apiKey } }
   )
   const matchesData = await matchesRes.json()
 
-  // Récupérer l'historique MMR pour les RR par match
+  // Get MMR history for RR per match
   const historyRes = await fetch(
     `https://api.henrikdev.xyz/valorant/v1/mmr-history/eu/${name}/${tag}`,
     { headers: { Authorization: apiKey } }
@@ -44,7 +44,7 @@ export default async function HistoryPage({ params }) {
     const enemyTeamData = match.teams?.find(t => t.team_id !== myTeam)
     const matchId = match.metadata?.match_id
 
-    // Chercher le RR correspondant à ce match dans l'historique MMR
+    // Find the RR corresponding to this match in MMR history
     const mmrEntry = mmrHistory.find(h => h.match_id === matchId)
     const rrChange = mmrEntry ? mmrEntry.mmr_change_to_last_game : null
 
@@ -61,33 +61,33 @@ export default async function HistoryPage({ params }) {
     }
   }) || []
 
-  // Calculer le total RR de la session
+  // Calculate total session RR
   const totalRr = matches.reduce((sum, m) => sum + (m.rrChange || 0), 0)
 
   return (
     <div className="space-y-6">
 
-      {/* EN-TÊTE */}
+      {/* HEADER */}
       <div>
         <Link href={`/player/${name}/${tag}`} className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-300 transition group">
           <span className="group-hover:-translate-x-0.5 transition">←</span>
-          <span>Retour au dashboard</span>
+          <span>Back to dashboard</span>
         </Link>
-        <h1 className="text-3xl font-bold mt-2">Historique de {account.name}</h1>
-        <p className="text-slate-400 text-sm">{matches.length} derniers matchs compétitifs</p>
+        <h1 className="text-3xl font-bold mt-2">{account.name}'s History</h1>
+        <p className="text-slate-400 text-sm">Last {matches.length} competitive matches</p>
       </div>
 
-      {/* SOUS-NAVIGATION */}
+      {/* SUB-NAVIGATION */}
       <div className="flex gap-2 border-b border-slate-800 pb-3 overflow-x-auto">
         <a href={`/player/${name}/${tag}`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Dashboard</a>
         <a href={`/player/${name}/${tag}/coach`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Coach</a>
         <a href={`/player/${name}/${tag}/maps`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Maps</a>
         <a href={`/player/${name}/${tag}/agents`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Agents</a>
-        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Stats avancées</a>
-        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm whitespace-nowrap">Historique</a>
+        <a href={`/player/${name}/${tag}/advanced`} className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition whitespace-nowrap">Advanced Stats</a>
+        <a href={`/player/${name}/${tag}/history`} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-b from-slate-800 to-slate-800/50 rounded-lg border border-slate-700 shadow-sm whitespace-nowrap">History</a>
       </div>
 
-      {/* COMPOSANT CLIENT */}
+      {/* CLIENT COMPONENT */}
       <HistoryView matches={matches} totalRr={totalRr} />
 
     </div>

@@ -1,3 +1,4 @@
+import Link from "next/link"
 export default async function PlayerPage({ params }) {
   const { name, tag } = await params
   const apiKey = process.env.HENRIK_API_KEY
@@ -62,17 +63,23 @@ export default async function PlayerPage({ params }) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
 
       {/* PLAYER */}
-      <div className="flex items-center gap-6">
-        <img
-          src={account.card.small}
-          className="rounded-xl w-16 h-16 object-cover border border-slate-700"
-        />
-        <div>
-          <h1 className="text-4xl font-bold">{account.name}</h1>
-          <p className="text-slate-400">#{account.tag} · Level {account.account_level}</p>
+      <div>
+        <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-300 transition group">
+          <span className="group-hover:-translate-x-0.5 transition">←</span>
+          <span>Back to search</span>
+        </Link>
+        <div className="flex items-center gap-4 mt-2">
+          <img
+            src={account.card.small}
+            className="rounded-xl w-12 h-12 object-cover border border-slate-700"
+          />
+          <div>
+            <h1 className="text-3xl font-bold">{account.name}<span className="text-slate-500">#{account.tag}</span></h1>
+            <p className="text-slate-400 text-sm">Level {account.account_level}</p>
+          </div>
         </div>
       </div>
 

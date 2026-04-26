@@ -69,16 +69,16 @@ export default async function MapsPage({ params }) {
         href={`/player/${name}/${tag}/map/${mapData.map}`}
         className={`group relative block bg-slate-900 border rounded-2xl overflow-hidden card-interactive ${borderColor}`}
       >
-        {/* Image de fond */}
+        {/* Background image */}
         {mapImage && (
           <div
-            className="absolute inset-0 bg-cover bg-center opacity-40 group-hover:opacity-50 transition"
+            className="absolute inset-0 bg-cover bg-center opacity-60 group-hover:opacity-75 transition"
             style={{ backgroundImage: `url(${mapImage})` }}
           />
         )}
 
-        {/* Dégradé sombre pour lisibilité */}
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-slate-900/40" />
+        {/* Dark gradient for readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-slate-900/30" />
 
         {/* Contenu */}
         <div className="relative p-4">
