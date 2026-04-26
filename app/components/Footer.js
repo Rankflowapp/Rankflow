@@ -60,6 +60,7 @@ export default function Footer() {
             <div>
               <p className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-3">Resources</p>
               <div className="space-y-2">
+                <a href="/about" className="block text-sm text-slate-300 hover:text-indigo-300 transition">About</a>
                 <a href="https://github.com/Rankflowapp/Rankflow" target="_blank" rel="noopener noreferrer" className="block text-sm text-slate-300 hover:text-indigo-300 transition">GitHub</a>
                 <button onClick={() => setModalOpen(true)} className="block text-sm text-slate-300 hover:text-indigo-300 transition">Contact us</button>
               </div>
