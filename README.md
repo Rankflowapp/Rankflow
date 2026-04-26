@@ -59,6 +59,8 @@ Rankflow translates raw stats into human advice. A Bronze player with 50% headsh
 ---
 
 ## 📁 Project Structure
+
+```text
 app/
 ├── layout.js                          # Root layout (font, header, footer, background)
 ├── page.js                            # Home page with search bar and VCT pro section
@@ -73,18 +75,19 @@ app/
 ├── utils/
 │   └── advancedMetrics.js             # Shared metrics calculation functions
 └── player/[name]/[tag]/
-├── page.js                        # Dashboard (profile, rank, curve, recap)
-├── coach/page.js                  # Coach (session plan, alerts, personalized tips)
-├── maps/page.js                   # Maps list (3 columns by WR with map images)
-├── map/[mapName]/page.js          # Map detail (stats, agents, matches)
-├── agents/page.js                 # Agents list (3 columns by WR with portraits)
-├── agent/[agentName]/page.js      # Agent detail (KDA, maps, matches)
-├── advanced/
-│   ├── page.js                    # Server component (data fetching)
-│   └── AdvancedView.js            # Client component (interactive accordion UI)
-└── history/
-├── page.js                    # Server component (data fetching)
-└── HistoryView.js             # Client component (filters)
+    ├── page.js                        # Dashboard (profile, rank, curve, recap)
+    ├── coach/page.js                  # Coach (session plan, alerts, personalized tips)
+    ├── maps/page.js                   # Maps list (3 columns by WR with map images)
+    ├── map/[mapName]/page.js          # Map detail (stats, agents, matches)
+    ├── agents/page.js                 # Agents list (3 columns by WR with portraits)
+    ├── agent/[agentName]/page.js      # Agent detail (KDA, maps, matches)
+    ├── advanced/
+    │   ├── page.js                    # Server component (data fetching)
+    │   └── AdvancedView.js            # Client component (interactive accordion UI)
+    └── history/
+        ├── page.js                    # Server component (data fetching)
+        └── HistoryView.js             # Client component (filters)
+```
 ---
 
 ## ✨ Features
