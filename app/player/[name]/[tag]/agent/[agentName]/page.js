@@ -1,3 +1,4 @@
+import PlayerNotFound from "../../../../components/PlayerNotFound"
 import Link from "next/link"
 
 export default async function AgentDetailPage({ params }) {
@@ -13,11 +14,7 @@ export default async function AgentDetailPage({ params }) {
   const accountData = await accountRes.json()
 
   if (!accountData.data) {
-    return (
-      <div className="text-center mt-20">
-        <h1 className="text-2xl font-bold text-rose-400">Player not found</h1>
-      </div>
-    )
+    return <PlayerNotFound />
   }
 
   const account = accountData.data

@@ -1,3 +1,4 @@
+import PlayerNotFound from "../../../../components/PlayerNotFound"
 import Link from "next/link"
 import HistoryView from "./HistoryView"
 
@@ -12,11 +13,7 @@ export default async function HistoryPage({ params }) {
   const accountData = await accountRes.json()
 
   if (!accountData.data) {
-    return (
-      <div className="text-center mt-20">
-        <h1 className="text-2xl font-bold text-rose-400">Player not found</h1>
-      </div>
-    )
+    return <PlayerNotFound />
   }
 
   const account = accountData.data

@@ -1,3 +1,4 @@
+import PlayerNotFound from "../../../components/PlayerNotFound"
 import Link from "next/link"
 export default async function PlayerPage({ params }) {
   const { name, tag } = await params
@@ -10,12 +11,7 @@ export default async function PlayerPage({ params }) {
   const accountData = await accountRes.json()
 
   if (!accountData.data) {
-    return (
-      <div className="text-center mt-20">
-        <h1 className="text-2xl font-bold text-rose-400">Player not found</h1>
-        <p className="text-slate-400 mt-2">Check the Riot ID and try again</p>
-      </div>
-    )
+    return <PlayerNotFound />
   }
 
   const account = accountData.data
