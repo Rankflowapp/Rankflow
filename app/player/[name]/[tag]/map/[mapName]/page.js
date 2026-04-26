@@ -1,4 +1,4 @@
-import PlayerNotFound from "../../../../components/PlayerNotFound"
+import PlayerNotFound from "../../../../../components/PlayerNotFound"
 import Link from "next/link"
 
 export default async function MapDetailPage({ params }) {
